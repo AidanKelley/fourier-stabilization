@@ -42,19 +42,17 @@ def stabilize_weights(test_model, N = 100000):
   # calculate the t_hats
   new_weights = 1/N * tf.linalg.matmul(random_point, output, transpose_a = True)
 
-  # take the sign for the l_1 case
-  new_weights = tf.math.sign(new_weights)
-
-  print(new_weights)
-
   # calculate the magnitue of the weight vector for each neuron
-  new_mags = tf.norm(new_weights, ord=100, axis=0)
+  new_mags = tf.norm(new_weights, ord=np.inf, axis=0)
+
+    # take the sign for the l_1 case
+  new_mags = tf.math.sign(new_mags)
 
   # get the weights of the old neuron
   old_weights = test_model.get_weights()[0]
 
   # calculate the magnitude of the weights of the old neuron
-  old_mags = tf.norm(old_weights, ord=100, axis=0)
+  old_mags = tf.norm(old_weights, ord=np.inf, axis=0)
 
   # calculate the proper scales 
   scales = old_mags / new_mags
