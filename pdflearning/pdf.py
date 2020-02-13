@@ -49,11 +49,15 @@ def sign(tensor):
 
   return tf.math.sign(tensor), grad
 
+def custom_sigmoid(tensor):
+
+  return 2*tf.math.sigmoid(tensor) - 1
+
 
 # the first category is 0 the second is 1
 def get_model():
   model = keras.Sequential([
-    keras.layers.Dense(16, activation=sign, input_shape=(135,)),
+    keras.layers.Dense(16, activation=custom_sigmoid, input_shape=(135,)),
     keras.layers.Dense(2, activation='softmax')
   ])
 

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn import datasets
 
 from pdf import get_model
+from change_sign import get_sign_model
 
 import tensorflow_probability as tfp
 
@@ -31,6 +32,7 @@ print(len(model.layers[0].get_weights()[0][0]))
 
 def stabilize_weights(test_model, N = 100000):
   # generate the random data
+  # NOTE: Can't Reuse Randomness
   coin_flip = tfp.distributions.Binomial(total_count = 1, probs = 0.5)
   random_point = 1 - 2 * coin_flip.sample(sample_shape=(N, 135))
 
@@ -40,18 +42,19 @@ def stabilize_weights(test_model, N = 100000):
   # calculate the t_hats
   new_weights = 1/N * tf.linalg.matmul(random_point, output, transpose_a = True)
 
-  # calculate the magnitue of the weight vector for each neuron
-  new_mags = tf.norm(new_weights, ord=np.inf, axis=0)
-
   # take the sign for the l_1 case
-  new_mags = tf.math.sign(new_mags)
+  new_weights = tf.math.sign(new_weights)
 
+  print(new_weights)
+
+  # calculate the magnitue of the weight vector for each neuron
+  new_mags = tf.norm(new_weights, ord=100, axis=0)
 
   # get the weights of the old neuron
   old_weights = test_model.get_weights()[0]
 
   # calculate the magnitude of the weights of the old neuron
-  old_mags = tf.norm(old_weights, ord=np.inf, axis=0)
+  old_mags = tf.norm(old_weights, ord=100, axis=0)
 
   # calculate the proper scales 
   scales = old_mags / new_mags
@@ -67,7 +70,7 @@ def stabilize_weights(test_model, N = 100000):
   old_total_weights[0] = scaled_weights
 
   # make a new model with the new, scaled weights
-  new_model = get_model()
+  new_model = get_sign_model()
   new_model.set_weights(old_total_weights)
 
   return new_model
@@ -80,6 +83,8 @@ test_model = keras.models.Model(inputs = model.input, outputs = model.layers[0].
 
 new_model = stabilize_weights(test_model)
 new_model.evaluate(x_test, y_test, verbose=2)
+
+print(new_model.get_weights())
 
 new_model.save_weights("pdfmodel_stabilized.h5");
 
