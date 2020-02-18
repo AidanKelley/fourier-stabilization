@@ -43,7 +43,9 @@ def stabilize_weights(test_model, N = 100000):
   new_weights = 1/N * tf.linalg.matmul(random_point, output, transpose_a = True)
 
   # take the sign for the l_1 case
-  new_weights = tf.math.sign(new_weights)
+  new_weights = (tf.math.sign(new_weights + 0.05) + tf.math.sign(new_weights-0.05))/2
+
+  # new_weights = tf.math.sign(test_model.get_weights()[0])
 
   # calculate the magnitude of the weight vector for each neuron
   new_mags = tf.norm(new_weights, ord=np.inf, axis=0)
@@ -82,7 +84,6 @@ test_model = keras.models.Model(inputs = model.input, outputs = model.layers[0].
 new_model = stabilize_weights(test_model)
 new_model.evaluate(x_test, y_test, verbose=2)
 
-print(new_model.get_weights())
 
 new_model.save_weights("pdfmodel_stabilized.h5");
 
