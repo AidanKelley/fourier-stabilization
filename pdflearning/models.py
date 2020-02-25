@@ -53,3 +53,25 @@ def sign(tensor):
     return dx
 
   return tf.math.sign(tensor), grad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
