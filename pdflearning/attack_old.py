@@ -52,11 +52,11 @@ test_model.evaluate(x_test, y_test, verbose=2)
 
 stable_model = get_logit_model()
 
-stable_model.load_weights("pdfmodel_stabilized.h5")
+stable_model.load_weights("pdfmodel_trained_bias.h5")
 
 orig_model = get_orig_logit_model()
 
-orig_model.load_weights("pdfmodel_weights.h5")
+orig_model.load_weights("pdfmodel_stabilized.h5")
 
 
 
@@ -73,8 +73,9 @@ def attack(x0, target, model):
 
   not_target = 1 - target
 
-  Zx_eta = model.predict(x_all_eta)
+  Zx_eta = model.predict(tf.reshape(x0, (1, n)))
 
+  max_eta_index = 0
   log_target = Zx_eta[max_eta_index, target]
   log_not_target = Zx_eta[max_eta_index, not_target]
 

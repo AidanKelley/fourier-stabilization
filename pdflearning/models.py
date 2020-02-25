@@ -3,7 +3,7 @@ from tensorflow import keras
 
 from FixedWeight import FixedWeight
 
-from AddLayer import AddLayer
+from BiasLayer import BiasLayer
 
 def custom_sigmoid(tensor):
   return 2*tf.math.sigmoid(tensor) - 1
@@ -35,9 +35,9 @@ def get_logit_model(activation=custom_sigmoid):
 
 def get_fixed_weight_model(activation=custom_sigmoid):
   model = keras.Sequential([
-      keras.layers.Dense(16, activation="linear", use_bias=False, input_shape=(135,)),
-      AddLayer(activation=activation),
-      keras.layers.Dense(2, activation="softmax")
+      keras.layers.Dense(16, activation="linear", use_bias=False, input_shape=(135,), trainable=False),
+      BiasLayer(activation=activation),
+      keras.layers.Dense(2, activation="softmax", trainable=False)
     ])
 
   model.compile(optimizer='adam',
@@ -45,21 +45,7 @@ def get_fixed_weight_model(activation=custom_sigmoid):
                 metrics=['accuracy'])
 
   return model
-"""
-def get_fixed_weight_model(activation=custom_sigmoid):
-  model = keras.Sequential([
-    FixedWeight(16, activation=activation),
-    keras.layers.Dense(2) # no activation function
-  ])
 
-  model.compile(optimizer='adam',
-                loss = 'sparse_categorical_crossentropy',
-                metrics=['accuracy'])
-
-  model.build(input_shape=(135,))
-
-  return model
-"""
 @tf.custom_gradient
 def sign(tensor):
 
