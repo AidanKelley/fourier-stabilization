@@ -8,7 +8,7 @@ import tensorflow_probability as tfp
 coin_flip_distribution = tfp.distributions.Binomial(total_count = 1, probs = 0.5)
 
 # this stabilizes weights in the l_1 case. Could be extended to work in other norms.
-def stabilize_weights(layer, N = 100000, beta = 0):
+def stabilize_weights(layer, N = 100000):
   # generate the random data
   # NOTE: Can't Reuse Randomness
 
@@ -25,8 +25,7 @@ def stabilize_weights(layer, N = 100000, beta = 0):
   new_weights = 1/N * tf.linalg.matmul(random_point, output, transpose_a = True)
 
   # take the sign for the l_1 case
-  # this is the "beta heuristic"
-  new_weights = (tf.math.sign(new_weights + beta) + tf.math.sign(new_weights - beta))/2
+  new_weights = tf.math.sign(new_weights)
 
   # calculate the magnitude of the weight vector for each neuron
   new_mags = tf.norm(new_weights, ord=np.inf, axis=0)

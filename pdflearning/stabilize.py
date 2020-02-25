@@ -12,7 +12,7 @@ model.evaluate(x_test, y_test, verbose=2)
 
 layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)
 
-new_weights = stabilize_weights(layer, beta=0.00)
+new_weights = stabilize_weights(layer)
 
 weights = model.get_weights()
 weights[0] = new_weights
