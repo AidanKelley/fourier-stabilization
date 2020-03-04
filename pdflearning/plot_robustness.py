@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 
-orig_freqs = [2, 5, 11, 61, 14, 5, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-stable_freqs = [2, 2, 6, 10, 46, 15, 8, 9, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+orig_freqs = [0, 25, 36, 19, 87, 6, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+stable_freqs = [1, 6, 10, 11, 87, 25, 20, 9, 6, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 display_range = 12
 
@@ -32,6 +32,6 @@ plt.legend()
 plt.xlabel("$||\\eta||_0 \\leq x$")
 plt.ylabel("accuracy")
 
-plt.suptitle("Accuracy vs. $l_0$ norm attack budget")
+plt.suptitle("Accuracy vs. $l_0$ norm attack budget (n = 1000)")
 
 plt.show()

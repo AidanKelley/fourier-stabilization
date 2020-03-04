@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 
 from pdfrate_data import x_train, y_train, x_test, y_test
 
-from models import get_model, get_fixed_weight_model
+from models import get_model, get_fixed_weight_model, sign
 
 # load the original model so we can load then extract the weights
 orig_model = get_model()
-orig_model.load_weights("pdfmodel_stabilized.h5")
+orig_model.load_weights("stabilized.h5")
 w = orig_model.get_weights()
 
 # get the new model and set it to have the stabilized weights

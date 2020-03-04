@@ -6,7 +6,7 @@ from stabilization import stabilize_weights
 
 from pdfrate_data import x_test, y_test
 
-model = get_model()
+model = get_model(activation=sign)
 model.load_weights("pdfmodel_weights.h5")
 model.evaluate(x_test, y_test, verbose=2)
 
@@ -20,4 +20,4 @@ model.set_weights(weights)
 
 
 model.evaluate(x_test, y_test, verbose=2)
-model.save_weights("stabilized.h5")
+model.save_weights("sign_stabilized.h5")

@@ -21,7 +21,10 @@ n_trials = 1000
 orig_freqs = [0 for _ in range(20)]
 stable_freqs = [0 for _ in range(20)]
 
-for i in np.random.randint(0, x_test.shape[0], size = n_trials):
+orig_accum = 0
+stable_accum = 0
+
+for count, i in enumerate(np.random.randint(0, x_test.shape[0], size = n_trials)):
   target = int(1 - y_test[i] + 0.5)
   x0 = x_test[i]
 
@@ -31,8 +34,13 @@ for i in np.random.randint(0, x_test.shape[0], size = n_trials):
   orig_freqs[orig_norm] += 1
   stable_freqs[stable_norm] += 1
 
+  orig_accum += orig_norm
+  stable_accum += stable_norm
+
   print(orig_freqs)
   print(stable_freqs)
+
+  print(f"orig: {float(orig_accum)/(count + 1)}, stable: {float(stable_accum)/(count + 1)}")
 
 
 print("DONE!")
