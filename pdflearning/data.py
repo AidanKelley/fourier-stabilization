@@ -22,7 +22,7 @@ def get_hidost():
   # inspired by pberkes answer: https://stackoverflow.com/questions/3674409/how-to-split-partition-a-dataset-into-training-and-test-datasets-for-e-g-cros, 
 
   # seed so we always get the same partition (can be changed later)
-  np.random.seed(1)
+  np.random.seed(0)
 
   # generate random indices
   random_indices = np.random.permutation(x_orig_train.shape[0])
@@ -32,8 +32,8 @@ def get_hidost():
   test_size = int(x_orig_train.shape[0] / 5)
 
   # split up the training and testing data in the same way
-  training_indices = random_indices[:test_size] # all before test_size
-  testing_indices = random_indices[test_size:] # all after test_size
+  testing_indices = random_indices[:test_size] # all before test_size
+  training_indices = random_indices[test_size:] # all after test_size
 
   x_train, y_train = x_orig_train[training_indices, :], y_orig_train[training_indices]
   x_test, y_test = x_orig_train[testing_indices, :], y_orig_train[testing_indices]

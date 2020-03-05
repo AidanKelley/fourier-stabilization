@@ -4,7 +4,7 @@ parser = ArgumentParser()
 
 parser.add_argument("dataset", action="store")
 parser.add_argument("in_file", action="store")
-parser.add_argument("out_file", action="store")
+parser.add_argument("-o", dest="out_file", action="store")
 
 args = parser.parse_args()
 
@@ -39,4 +39,7 @@ model.set_weights(weights)
 
 
 model.evaluate(x_test, y_test, verbose=2)
-model.save_weights(out_file)
+
+if out_file is not None:
+	model.save_weights(out_file)
+	print(f"model saved to {out_file}")

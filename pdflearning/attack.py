@@ -6,13 +6,16 @@ parser.add_argument("dataset", action="store")
 parser.add_argument("-i", dest='in_files', action="append")
 parser.add_argument("-n", "--trials", dest='trials', action="store", default=100)
 parser.add_argument("-o", dest='out_file', action="store")
+parser.add_argument("--all", dest="do_all", action="store_true")
 
 args = parser.parse_args()
 
 dataset = args.dataset
 in_files = args.in_files
-n_trials = args.trials
+n_trials = int(args.trials)
 out_file = args.out_file
+do_all = args.do_all
+  
 
 from data import get_data
 
@@ -49,8 +52,11 @@ for in_file in in_files:
 
 freqs = [[0 for _ in range(data_shape[0])] for _ in models]
 
-np.random.seed(1)
-test_indices = np.random.randint(0, x_test.shape[0], size = n_trials)
+if do_all or n_trials >= x_test.shape[0]:
+  test_indices = range(x_test.shape[0])
+else:
+  np.random.seed(1)
+  test_indices = np.random.randint(0, x_test.shape[0], size = n_trials)
 
 for count, i in enumerate(test_indices):
   target = int(1 - y_test[i] + 0.5)
