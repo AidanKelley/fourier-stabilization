@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  15 FEB 2020 13:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  18 FEB 2020 13:56
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**document.tex
-(./document.tex
+**prob.tex
+(./prob.tex
 LaTeX2e <2018-04-01> patch level 2
 Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/article.cls
@@ -129,8 +129,8 @@ Package: enumitem 2011/09/28 v3.5.2 Customized lists
 \enit@inbox=\box28
 \enitdp@description=\count103
 )
-(./document.aux)
-\openout1 = `document.aux'.
+(./prob.aux)
+\openout1 = `prob.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
 LaTeX Font Info:    ... okay on input line 76.
@@ -146,8 +146,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 76.
 LaTeX Font Info:    ... okay on input line 76.
 LaTeX Font Info:    Try loading font information for OT1+pplx on input line 76.
 
-
-(/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/ot1pplx.fd
+ (/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/ot1pplx.fd
 File: ot1pplx.fd 2004/09/06 font definitions for OT1/pplx.
 )
 *geometry* driver: auto-detecting
@@ -207,82 +206,36 @@ LaTeX Font Info:    Try loading font information for OT1+zplm on input line 77.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/ot1zplm.fd
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 )
-LaTeX Font Info:    Font shape `OT1/pplx/bx/n' in size <9> not available
-(Font)              Font shape `OT1/pplx/b/n' tried instead on input line 79.
+LaTeX Font Info:    Try loading font information for U+fplmbb on input line 89.
 
-
-LaTeX Warning: Citation `vorobook' on page 1 undefined on input line 81.
-
-LaTeX Font Info:    Font shape `OT1/pplx/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/pplx/b/n' tried instead on input line 85.
-LaTeX Font Info:    Font shape `OT1/pplx/bx/n' in size <10> not available
-(Font)              Font shape `OT1/pplx/b/n' tried instead on input line 87.
-
-LaTeX Warning: Citation `ecocpaper' on page 1 undefined on input line 87.
-
-
-LaTeX Warning: Citation `cod2' undefined on input line 87.
-
-
-LaTeX Warning: Citation `tftut' on page 1 undefined on input line 93.
-
-LaTeX Font Info:    Font shape `OT1/pplx/bx/n' in size <12> not available
-(Font)              Font shape `OT1/pplx/b/n' tried instead on input line 95.
-LaTeX Font Info:    Try loading font information for U+fplmbb on input line 97.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/psnfss/ufplmbb.fd
 File: ufplmbb.fd 2003/10/30 Fontinst v1.914 font definitions for U/fplmbb.
 ) [1
 
-{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-
-LaTeX Warning: Citation `tftut' on page 2 undefined on input line 105.
-
-
-LaTeX Warning: Citation `cod2' on page 2 undefined on input line 109.
-
-
-LaTeX Warning: Citation `bool' on page 2 undefined on input line 113.
-
-[2]
-
-LaTeX Warning: Citation `vorobook' on page 3 undefined on input line 142.
-
-
-LaTeX Warning: Citation `papernot' on page 3 undefined on input line 144.
-
-
-LaTeX Warning: Citation `ecocpaper' on page 3 undefined on input line 144.
-
-[3] [4] (./document.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./prob
+.aux) ) 
 Here is how much of TeX's memory you used:
- 1903 strings out of 492649
- 25481 string characters out of 6129622
- 101014 words of memory out of 5000000
- 5756 multiletter control sequences out of 15000+600000
- 39554 words of font info for 103 fonts, out of 8000000 for 9000
+ 1859 strings out of 492649
+ 25028 string characters out of 6129622
+ 98022 words of memory out of 5000000
+ 5734 multiletter control sequences out of 15000+600000
+ 25551 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 27i,6n,22p,1695b,209s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
-exlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/tex
-live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texl
-ive/2018/texmf-dist/fonts/type1/public/mathpazo/fplmbb.pfb></usr/local/texlive/
-2018/texmf-dist/fonts/type1/public/mathpazo/fplmr.pfb></usr/local/texlive/2018/
-texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/local/texlive/2018/texm
-f-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2018/texmf-dist/
-fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2018/texmf-dist/fonts/t
-ype1/urw/palatino/uplri8a.pfb>
-Output written on document.pdf (4 pages, 97708 bytes).
+ 27i,6n,21p,1435b,196s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/lo
+cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local
+/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/
+texlive/2018/texmf-dist/fonts/type1/public/mathpazo/fplmbb.pfb></usr/local/texl
+ive/2018/texmf-dist/fonts/type1/public/mathpazo/fplmr.pfb></usr/local/texlive/2
+018/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></usr/local/texlive/2018/
+texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2018/texmf-d
+ist/fonts/type1/urw/palatino/uplri8a.pfb>
+Output written on prob.pdf (1 page, 62371 bytes).
 PDF statistics:
- 50 PDF objects out of 1000 (max. 8388607)
- 35 compressed objects within 1 object stream
+ 41 PDF objects out of 1000 (max. 8388607)
+ 29 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

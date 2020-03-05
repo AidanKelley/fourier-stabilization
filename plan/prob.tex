@@ -1,0 +1,167 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=0.7in,right=0.7in,top=1in,bottom=0.7in]{geometry}
+%\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\usepackage[sc]{mathpazo}
+\newcommand{\bN}{\mathbb{N}}
+\newcommand{\bR}{\mathbb{R}}
+\newcommand{\bC}{\mathbb{C}}
+\newcommand{\bZ}{\mathbb{Z}}
+\newcommand{\bQ}{\mathbb{Q}}
+\newcommand{\bF}{\mathbb{F}}
+
+\newcommand{\A}{\alpha}
+
+\newcommand{\e}{\epsilon}
+\newcommand{\D}{\delta}
+
+\newcommand{\liminfty}[1]{\lim_{ #1 \to \infty}}
+\newcommand{\Hom}{\mathrm{Hom}}	
+\newcommand{\twom}[4]{\[\left[ \begin{array}{cc} #1&#2\\#3&#4\end{array}\right]\]}
+\newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\diffn}[3]{\frac{\partial^{#1} #2}{\partial #3^{#1}}}
+\newcommand{\diffs}[2]{\diffn{2}{#1}{#2}}
+\newcommand{\diffm}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\newcommand{\del}{\nabla}
+\newcommand{\norm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\crossproductA}[6]{\begin{vmatrix}
+\vec i & \vec j & \vec k \\
+#1 & #2 & #3 \\
+#4 & #5 & #6 \\
+\end{vmatrix}}
+\newcommand{\crossproductB}[6]{\begin{vmatrix}
+#2 & #3 \\
+#5 & #6 \\
+\end{vmatrix} \vec i
+- \begin{vmatrix}
+#1 & #3 \\
+#4 & #6 \\
+\end{vmatrix} \vec j
++ \begin{vmatrix}
+#1 & #2 \\
+#4 & #5 \\
+\end{vmatrix} \vec k
+}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+
+\newcommand{\colcup}[2]{\bigcup_{#1 \in #2} #1}
+\newcommand{\colcap}[2]{\bigcap_{#1 \in #2} #1}
+
+\newcommand{\colcalcup}[1]{\colcup{#1}{\mathcal{#1}}}
+\newcommand{\colcalcap}[1]{\colcap{#1}{\mathcal{#1}}}
+
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\sign}{sign}
+
+
+\newcommand{\sym}{\nabla}
+
+\usepackage{enumitem}
+
+\DeclareMathOperator*{\E}{\mathbb{E}}
+
+\DeclareMathOperator{\1}{\mathbb{1}}
+
+\title{Some Probability}
+\author{Aidan Kelley}
+
+\begin{document}
+\maketitle
+
+Let $X$ be a random variable that is $-1$ with probability $1-p$ and $1$ with probability $p$. However, Hoeffding inequalities are in terms of some random variable $H$ where $H$ is $0$ with probability $1-p$ and $1$ with probability $p$. If $\hat{p} = \frac{1}{n} \sum_{i = 1}^n H_1 =$ the sample proportion, we have for $\e > 0$
+
+$$P(\hat{p} \le p - \e) \le e^{-2\e^2n}$$
+$$P(\hat{p} \ge p + \e) \le e^{-2\e^2n}$$
+
+Then, for each of these, we can multiply both inequalities by 2 and and subtract 1 to get
+
+$$P(2\hat{p} -1 \le 2p -1 - 2\e) \le e^{-2\e^2n}$$
+$$P(2\hat{p} -1 \ge 2p -1 + 2\e) \le e^{-2\e^2n}$$
+
+But, $2\hat{p} - 1$ is just the random variable $\bar{X}$, the mean of a sample of size $n$, and $2p - 1$ is just $\E[X]$. Then, we have that
+
+$$P(\bar{X} \le \E[X] - \e) \le e^{-1/2 \e^2 n}$$
+$$P(\bar{X} \ge \E[X] + \e) \le e^{-1/2 \e^2 n}$$
+
+Then, we can combine these. Consider the probability of at least one of these events happening. Then, by the union bound this is
+
+$$P(\bar{X} \le \E[X] - \e) \cup P(\bar{X} \ge \E[X] + \e)
+\le P(\bar{X} \le \E[X] - \e) + P(\bar{X} \ge \E[X] + \e)
+\le 2 e^{-1/2 \e^2 n}.$$
+
+We can write this as one statement as $\bar{X} \le \E[X] - \e$ or $\bar{X} \ge \E[X] + \e$, which is equivalent to $\bar{X} - \E[X] \le -\e$ or $\bar{X} - \E[X] \ge \e$, which is the same as $|\bar{X} - \E[X]| \ge \e$. Then, we have that
+
+$$P(| \bar{X} - \E[X]| \ge \e) \le 2 e^{-1/2 \e^2 n}.$$
+
+Calculating weights stochastically in the $l_0$ case is the same as trying find the sign of $\E[X]$. 
+
+
+
+
+
+
+
+
+
+%Then, we want to devise a test to figure out if $\E[X] > 0$ or $\E[X] < 0$. We want to ensure that the probability of a misclassification instead of no classification is at most $\alpha$. Then, we consider a series of tests of increasing accuracy to determine the sign of $\E[X]$. Then, we want to pick some $c > 0$ such that if $\bar{X} > c$ we conclude $\E[X] > 0$, and if $\bar{X} < -c$ then we conclude that $\E[X] < 0$. We want to minimize the probability of a misclassification. The probability of a misclassification in one direction is $P({\text{we conclude} \E[X] > 0} | \E[X] < 0) = P(\bar{X} > c | \E[X] < 0)$. Then, assume that $\E[X] < 0$ and we will calculate the probability that $P(\bar{X} > c)$. Since $\E[X] < 0$, the set of events where $\bar{X} > c$ is contained in the set of events where $\bar{X} > \E[X] + c$, so we have that $P(\bar{x} > c) \le P(\bar{X} > \E[X] + c)$. But then, the bound derived above tells us that $P(\bar{X} > \E[X] + c) \le e^{-1/2 c^2 n}$. Then, as long as we set $e^{-1/2c^2 n} \le \alpha/2$, the probability of misclassification in this direction will be less than $\alpha/2$. However, we also want to prevent misclassification in the other direction. From the union bound, the chance of a misclassification in either direction is 2 times the chance in just one direction, so if we have such an $\alpha$, the overall probability of a misclassification is less than $\alpha$.
+
+%Then, say we have a sequence of tests $T_1, \ldots T_n$ where $\alpha_i = \alpha/2^i$. Then, the sum of misclassifications over all of the tests will be less than $\alpha$. Then, for each test pick $n$ such that as above.
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
