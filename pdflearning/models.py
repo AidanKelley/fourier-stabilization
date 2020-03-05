@@ -10,9 +10,9 @@ def custom_sigmoid(tensor):
 
 
 # the first category is 0 the second is 1
-def get_model(activation=custom_sigmoid):
+def get_model(input_shape=(135,), activation=custom_sigmoid):
   model = keras.Sequential([
-    keras.layers.Dense(16, activation=activation, input_shape=(135,)),
+    keras.layers.Dense(16, activation=activation, input_shape=input_shape),
     keras.layers.Dense(2, activation='softmax')
   ])
 
@@ -22,9 +22,9 @@ def get_model(activation=custom_sigmoid):
   return model
 
 # this is the model with no softmax at the end of it
-def get_logit_model(activation=custom_sigmoid):
+def get_logit_model(input_shape=(135,), activation=custom_sigmoid):
   model = keras.Sequential([
-    keras.layers.Dense(16, activation=activation, input_shape=(135,)),
+    keras.layers.Dense(16, activation=activation, input_shape=input_shape),
     keras.layers.Dense(2) # no activation function
   ])
 
@@ -33,9 +33,9 @@ def get_logit_model(activation=custom_sigmoid):
                 metrics=['accuracy'])
   return model
 
-def get_fixed_weight_model(activation=custom_sigmoid):
+def get_fixed_weight_model(input_shape=(135,), activation=custom_sigmoid):
   model = keras.Sequential([
-      keras.layers.Dense(16, activation="linear", use_bias=False, input_shape=(135,), trainable=False),
+      keras.layers.Dense(16, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
       BiasLayer(activation=activation),
       keras.layers.Dense(2, activation="softmax", trainable=False)
     ])

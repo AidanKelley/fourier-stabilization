@@ -29,12 +29,10 @@ model.build(x_train.shape)
 model.load_weights(in_file)
 model.evaluate(x_test, y_test, verbose=2)
 
-layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)
-
-new_weights = stabilize_l1(layer)
-
 weights = model.get_weights()
-weights[0] = new_weights
+print(weights)
+weights[1] = 0 * weights[1]
+print(weights)
 model.set_weights(weights)
 
 

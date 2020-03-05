@@ -1,51 +1,76 @@
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+
+parser.add_argument("dataset", action="store")
+parser.add_argument("-i", dest='in_files', action="append")
+parser.add_argument("-n", "--trials", dest='trials', action="store", default=100)
+parser.add_argument("-o", dest='out_file', action="store")
+
+args = parser.parse_args()
+
+dataset = args.dataset
+in_files = args.in_files
+n_trials = args.trials
+out_file = args.out_file
+
+from data import get_data
+
+_, _, x_test, y_test = get_data(dataset)
+
+
 import tensorflow as tf
 from tensorflow import keras
 
 import numpy as np
 
-from pdfrate_data import x_test, y_test
 from models import get_logit_model
 
 from attacks import l0_attack
 
+import json
+
+data_shape = x_test.shape[1:]
+
+# pad infile names for prettiness
+
+lens = [len(name) for name in in_files]
+max_len = max(lens)
+
+names = [name + " " * (max_len - len(name)) for name in in_files]
 
 
-orig_model = get_logit_model()
-orig_model.load_weights("pdfmodel_weights.h5")
+models = []
 
-stable_model = get_logit_model()
-stable_model.load_weights("pdfmodel_trained_bias.h5")
+for in_file in in_files:
+  model = get_logit_model(input_shape=data_shape)
+  model.load_weights(in_file)
+  models.append(model)
 
-n_trials = 1000
+freqs = [[0 for _ in range(data_shape[0])] for _ in models]
 
-orig_freqs = [0 for _ in range(20)]
-stable_freqs = [0 for _ in range(20)]
+np.random.seed(1)
+test_indices = np.random.randint(0, x_test.shape[0], size = n_trials)
 
-orig_accum = 0
-stable_accum = 0
-
-for count, i in enumerate(np.random.randint(0, x_test.shape[0], size = n_trials)):
+for count, i in enumerate(test_indices):
   target = int(1 - y_test[i] + 0.5)
   x0 = x_test[i]
 
-  orig_norm, _ = l0_attack(x0, target, orig_model)
-  stable_norm, _ = l0_attack(x0, target, stable_model)
+  for index, model in enumerate(models):
+    norm, _ = l0_attack(x0, target, model)
+    freqs[index][norm] += 1
 
-  orig_freqs[orig_norm] += 1
-  stable_freqs[stable_norm] += 1
+  for index, freq in enumerate(freqs):
+    print(f"{names[index]}: {freq[1:30]}")
+if out_file is not None:
 
-  orig_accum += orig_norm
-  stable_accum += stable_norm
+  out_obj = {'file_names': in_files, 'freq_data': freqs}
+  with open(out_file, "w") as out_handle:
+    json.dumps(out_obj, out_handle)
 
-  print(orig_freqs)
-  print(stable_freqs)
-
-  print(f"orig: {float(orig_accum)/(count + 1)}, stable: {float(stable_accum)/(count + 1)}")
-
-
-print("DONE!")
-print(f"orig_freqs = {orig_freqs}")
-print(f"stable_freqs = {stable_freqs}")
+  print(f"saved to {out_file}")
+else:
+  print(f"all_freqs = {freqs}")
 
 
 
