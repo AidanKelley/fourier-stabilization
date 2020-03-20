@@ -18,7 +18,7 @@ all_freqs = data["freq_data"]
 
 try:
 	clip = int(args.clip)
-except Error:
+except TypeError:
 	clip = len(all_freqs[0])
 
 from matplotlib import pyplot as plt
@@ -37,7 +37,7 @@ all_hists = [make_hist(freq) for freq in all_freqs]
 
 domain = [i for i in range(len(all_hists[0]))]
 
-labels = ["original", "stabilized", "trained biases", "zero biases"]
+labels = ["original", "stabilized (zero biases)", "trained biases", "zero biases"]
 
 for index, hist in enumerate(all_hists):
 	plt.plot(domain, hist, '.-', label=labels[index])
