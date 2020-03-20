@@ -32,40 +32,44 @@ import numpy as np
 from models import get_logit_model
 
 from attacks import l0_attack
-import art
-
+import foolbox
 import json
 
 data_shape = x_test.shape[1:]
 
 # pad infile names for prettiness
-
 lens = [len(name) for name in in_files]
 max_len = max(lens)
-
 names = [name + " " * (max_len - len(name)) for name in in_files]
 
-
+# load the models
 models = []
-
 for in_file in in_files:
   model = get_logit_model(input_shape=data_shape)
   model.load_weights(in_file)
   models.append(model)
 
-freqs = [[0 for _ in range(data_shape[0])] for _ in models]
-
+# choose the data to test with
+# if needed, just use all the data
 if do_all or n_trials >= x_test.shape[0]:
   test_indices = range(x_test.shape[0])
+# otherwise, take a random sample
 else:
   np.random.seed(1)
-  test_indices = np.random.randint(0, x_test.shape[0], size = n_trials)
+  test_indices = np.random.choice(x_test.shape[0], size=n_trials, replace=False)
 
+# the custom version of JSMA that we coded
 if attack == "custom_jsma": 
+
+  # set up the data structure that holds frequencies
+  freqs = [[0 for _ in range(data_shape[0])] for _ in models]
+
+  # run the attack for every test example
   for count, i in enumerate(test_indices):
     target = int(1 - y_test[i] + 0.5)
     x0 = x_test[i]
 
+    # run the attack for every model
     for index, model in enumerate(models):
       norm, _ = l0_attack(x0, target, model)
       freqs[index][norm] += 1
@@ -73,6 +77,17 @@ if attack == "custom_jsma":
     for index, freq in enumerate(freqs):
       print(f"{names[index]}: {freq[0:30]}")
 
+  # save the results
+  if out_file is not None:
+    out_obj = {'file_names': in_files, 'freq_data': freqs}
+    with open(out_file, "w") as out_handle:
+      json.dump(out_obj, out_handle)
+
+    print(f"saved to {out_file}")
+  else:
+    print(f"all_freqs = {freqs}")
+
+# the Carlini and Wagner attack, provided by foolbox
 elif attack == "carlini":
   
   x_rand = x_test[test_indices]
@@ -95,7 +110,7 @@ elif attack == "carlini":
                                                    initial_const=0.0001,
                                                    confidence=0)
   x_examples = attack_obj.generate(x_rand)
-  
+
   tf.compat.v1.enable_eager_execution()
 
   norms = tf.norm(x_rand-x_examples, axis=1)
@@ -106,16 +121,6 @@ elif attack == "carlini":
 
 else:
   exit("invalid attack")
-
-if out_file is not None:
-
-  out_obj = {'file_names': in_files, 'freq_data': freqs}
-  with open(out_file, "w") as out_handle:
-    json.dump(out_obj, out_handle)
-
-  print(f"saved to {out_file}")
-else:
-  print(f"all_freqs = {freqs}")
 
 
 
