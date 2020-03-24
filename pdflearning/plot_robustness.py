@@ -37,7 +37,8 @@ all_hists = [make_hist(freq) for freq in all_freqs]
 
 domain = [i for i in range(len(all_hists[0]))]
 
-labels = ["original", "stabilized (zero biases)", "trained biases", "zero biases"]
+# labels = ["original", "stabilized (zero biases)", "trained biases", "zero biases"]
+labels = data["file_names"]
 
 for index, hist in enumerate(all_hists):
 	plt.plot(domain, hist, '.-', label=labels[index])
@@ -47,7 +48,7 @@ plt.legend()
 plt.xlabel("$||\\eta||_0 \\leq x$")
 plt.ylabel("accuracy")
 
-plt.suptitle("Accuracy on Hidost data following JSMA attack with limited budget ($n$ = 100)")
+# plt.suptitle("Accuracy on Hidost data following JSMA attack with limited budget ($n$ = 100)")
 
 plt.show()
 

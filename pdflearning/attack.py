@@ -89,35 +89,44 @@ if attack == "custom_jsma":
 
 # the Carlini and Wagner attack, provided by foolbox
 elif attack == "carlini":
-  
+  # some data
   x_rand = x_test[test_indices]
   y_rand = y_test[test_indices]
 
-  print(x_rand[0])
-  print(tf.norm(x_rand[0], ord=2))
+  # data structure to store the (unordered) norms
+  min_norms = [[] for _ in models]
 
-  model = models[0]
+  for model_index, model in enumerate(models):
 
-  # todo: have to decide whether or not to clip here: Should we allow a value below -1 or above 1?
-  tf.compat.v1.disable_eager_execution()
-  wrapped_model = art.classifiers.KerasClassifier(model, use_logits=False)
+    # foolbox setup
+    foolbox_model = foolbox.models.TensorFlowEagerModel(model, bounds=(-2, 2))
 
-  attack_obj = art.attacks.evasion.CarliniL2Method(classifier=wrapped_model,
-                                                   targeted=False,
-                                                   learning_rate=0.01,
-                                                   binary_search_steps=25,
-                                                   max_iter=50,
-                                                   initial_const=0.0001,
-                                                   confidence=0)
-  x_examples = attack_obj.generate(x_rand)
+    # defaults to misclassification (untargeted)
+    attack = foolbox.attacks.CarliniWagnerL2Attack(foolbox_model)
 
-  tf.compat.v1.enable_eager_execution()
+    x_adversarial = attack(x_rand, y_rand,
+                           unpack = True,
+                           binary_search_steps=10,
+                           max_iterations = 100,
+                           confidence = 0,
+                           learning_rate = 0.01,
+                           initial_const = 0.0001,
+                           abort_early = True)
 
-  norms = tf.norm(x_rand-x_examples, axis=1)
+    norms = tf.norm(x_rand-x_adversarial, axis=1)
 
-  print(norms[0])
-  print(norms[1])
-  print(model.predict(x_examples))
+    # Is this messy? Yes. Does it work? Yes.
+    min_norms[model_index] = norms.numpy().tolist()
+  
+  # save the results
+  if out_file is not None:
+    out_obj = {'file_names': in_files, 'min_norms': min_norms}
+    with open(out_file, "w") as out_handle:
+      json.dump(out_obj, out_handle)
+
+    print(f"saved to {out_file}")
+  else:
+    print(f"min_norms = {freqs}")    
 
 else:
   exit("invalid attack")

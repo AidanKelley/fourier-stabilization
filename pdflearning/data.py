@@ -1,5 +1,12 @@
 from sklearn import datasets
 import numpy as np
+import tensorflow as tf
+
+def cast_float(x):
+  return x.astype(np.float32)
+
+def cast_int(x):
+  return x.astype(np.int32)
 
 def get_pdfrate():
   train_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_train.libsvm", n_features=135, zero_based=True)
@@ -10,7 +17,7 @@ def get_pdfrate():
   x_train = 1 - 2*x_train
   x_test = 1 - 2*x_test
 
-  return x_train, y_train, x_test, y_test
+  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
 
 def get_hidost():
@@ -38,7 +45,7 @@ def get_hidost():
   x_train, y_train = x_orig_train[training_indices, :], y_orig_train[training_indices]
   x_test, y_test = x_orig_train[testing_indices, :], y_orig_train[testing_indices]
 
-  return x_train, y_train, x_test, y_test
+  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
 def get_data(dataset):
   if dataset in ["pdfrate"]:
