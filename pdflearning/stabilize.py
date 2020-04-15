@@ -25,16 +25,13 @@ x_train, y_train, x_test, y_test = get_data(dataset)
 import tensorflow as tf
 from tensorflow import keras
 
-from models import get_model, sign
+from models import load_model, sign
 from stabilization import stabilize_l1, stabilize_lp
 
 from coding import load_codes
 
-model = get_model(input_shape=x_train.shape[1:])
-model.build(x_train.shape)
-model.load_weights(in_file)
+model = load_model(x_train, in_file)
 model.evaluate(x_test, y_test, verbose=2)
-
 layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)
 
 if code_file is not None:
@@ -59,14 +56,12 @@ weights[1] = 0 * weights[1]
 if code_file is not None:
   x_train, y_train, x_test, y_test = get_data(dataset + ":" + code_file)
 
-new_model = get_model(input_shape=(x_test.shape[1:]))
-new_model.build(x_test.shape)
-new_model.set_weights(weights)
+model.set_weights(weights)
 
-new_model.evaluate(x_train, y_train, verbose=2)
+model.evaluate(x_train, y_train, verbose=2)
 
 if out_file is not None:
-  new_model.save_weights(out_file)
+  model.save_weights(out_file)
   print(f"model saved to {out_file}")
 
 

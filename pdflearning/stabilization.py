@@ -30,7 +30,7 @@ def stabilize_lp(p, layer, codes=[], N = 100000):
   t_hats = 1/N * tf.linalg.matmul(random_point, output, transpose_a = True)
   
   # if there are codes, include them here
-  if len(codes) > 0:
+  if codes is not None and len(codes) > 0:
     coded_t_hats = code_coefficients(layer, codes, test_data=random_point)
     t_hats = tf.concat([t_hats, coded_t_hats], axis=0)
 
@@ -78,11 +78,10 @@ def stabilize_l1(layer, codes=[]):
   new_weights = tf.math.sign(old_weights)
 
   # if there are codes, we need to calculate those, too.
-  if len(codes) > 0:
+  if codes is not None and len(codes) > 0:
     coded_coefs = code_coefficients(layer, codes)
     coded_weights = tf.math.sign(coded_coefs)
-
-  new_weights = tf.concat([new_weights, coded_weights], axis=0)
+    new_weights = tf.concat([new_weights, coded_weights], axis=0)
 
   # calculate the magnitude of the weights of the old neuron
   old_mags = tf.norm(old_weights, ord=np.inf, axis=0)

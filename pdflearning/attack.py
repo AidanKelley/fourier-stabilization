@@ -30,7 +30,7 @@ from tensorflow import keras
 
 import numpy as np
 
-from models import get_logit_model
+from models import load_model
 
 from attacks import l0_attack
 import foolbox
@@ -54,8 +54,7 @@ for index, in_file in enumerate(in_files):
 
   data_shape = x_test.shape[1:]
   print(f"index: {index} data_shape:{data_shape} in_file: {in_file}")
-  model = get_logit_model(input_shape=data_shape)
-  model.load_weights(in_file)
+  model = load_model(x_train, in_file, flavor="logit_model")
   models.append(model)
 
 
