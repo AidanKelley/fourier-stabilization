@@ -5,6 +5,7 @@ parser = ArgumentParser()
 parser.add_argument("norm", action="store")
 parser.add_argument("dataset", action="store")
 parser.add_argument("in_file", action="store")
+parser.add_argument("-c", dest="codes", action="store")
 parser.add_argument("-o", dest="out_file", action="store")
 
 args = parser.parse_args()
@@ -13,6 +14,7 @@ norm = args.norm
 dataset = args.dataset
 in_file = args.in_file
 out_file = args.out_file
+code_file = args.codes
 
 from data import get_data
 
@@ -24,7 +26,9 @@ import tensorflow as tf
 from tensorflow import keras
 
 from models import get_model, sign
-from stabilization import stabilize_l1, stabilize_l2
+from stabilization import stabilize_l1, stabilize_lp
+
+from coding import load_codes
 
 model = get_model(input_shape=x_train.shape[1:])
 model.build(x_train.shape)
@@ -33,12 +37,17 @@ model.evaluate(x_test, y_test, verbose=2)
 
 layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)
 
-if norm == "l0" or norm == "l1":
-	new_weights = stabilize_l1(layer)
-elif norm == "l2":
-	new_weights = stabilize_l2(layer)
+if code_file is not None:
+  codes = load_codes(code_file)
 else:
-	exit(f"norm '{norm}' not ok")
+  codes = None
+
+if norm == "l0" or norm == "l1":
+  new_weights = stabilize_l1(layer, codes)
+elif norm == "l2":
+  new_weights = stabilize_lp(2, layer, codes)
+else:
+  exit(f"norm '{norm}' not ok")
 
 
 weights = model.get_weights()
@@ -47,16 +56,18 @@ weights[0] = new_weights
 # additionally, zero the biases
 weights[1] = 0 * weights[1]
 
-model.set_weights(weights)
+if code_file is not None:
+  x_train, y_train, x_test, y_test = get_data(dataset + ":" + code_file)
 
+new_model = get_model(input_shape=(x_test.shape[1:]))
+new_model.build(x_test.shape)
+new_model.set_weights(weights)
 
-model.evaluate(x_test, y_test, verbose=2)
+new_model.evaluate(x_train, y_train, verbose=2)
 
 if out_file is not None:
-	model.save_weights(out_file)
-	print(f"model saved to {out_file}")
-
-
+  new_model.save_weights(out_file)
+  print(f"model saved to {out_file}")
 
 
 

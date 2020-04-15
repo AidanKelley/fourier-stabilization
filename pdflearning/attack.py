@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 
 parser.add_argument("attack", action="store")
-parser.add_argument("dataset", action="store")
+parser.add_argument("-d", dest='datasets', action="append")
 parser.add_argument("-i", dest='in_files', action="append")
 parser.add_argument("-n", "--trials", dest='trials', action="store", default=100)
 parser.add_argument("-o", dest='out_file', action="store")
@@ -12,17 +12,18 @@ parser.add_argument("--all", dest="do_all", action="store_true")
 args = parser.parse_args()
 
 attack = args.attack
-dataset = args.dataset
+datasets = args.datasets
 in_files = args.in_files
 n_trials = int(args.trials)
 out_file = args.out_file
 do_all = args.do_all
   
 
+assert(len(datasets) == len(in_files))
+
 from data import get_data
 
-_, _, x_test, y_test = get_data(dataset)
-
+big_data = [get_data(dataset) for dataset in datasets]
 
 import tensorflow as tf
 from tensorflow import keras
@@ -35,7 +36,6 @@ from attacks import l0_attack
 import foolbox
 import json
 
-data_shape = x_test.shape[1:]
 
 # pad infile names for prettiness
 lens = [len(name) for name in in_files]
@@ -44,38 +44,57 @@ names = [name + " " * (max_len - len(name)) for name in in_files]
 
 # load the models
 models = []
-for in_file in in_files:
+data_size = big_data[0][2].shape[0]
+
+max_data_dim = max([data[0].shape[1] for data in big_data])
+
+for index, in_file in enumerate(in_files):
+  x_test = big_data[index][2]
+  assert(x_test.shape[0] == data_size)
+
+  data_shape = x_test.shape[1:]
+  print(f"index: {index} data_shape:{data_shape} in_file: {in_file}")
   model = get_logit_model(input_shape=data_shape)
   model.load_weights(in_file)
   models.append(model)
 
+
 # choose the data to test with
 # if needed, just use all the data
-if do_all or n_trials >= x_test.shape[0]:
-  test_indices = range(x_test.shape[0])
+if do_all or n_trials >= data_size:
+  test_indices = range(data_size)
 # otherwise, take a random sample
 else:
   np.random.seed(1)
-  test_indices = np.random.choice(x_test.shape[0], size=n_trials, replace=False)
+  test_indices = np.random.choice(data_size, size=n_trials, replace=False)
 
 # the custom version of JSMA that we coded
 if attack == "custom_jsma": 
 
   # set up the data structure that holds frequencies
-  freqs = [[0 for _ in range(data_shape[0])] for _ in models]
+  freqs = [[0 for _ in range(max_data_dim)] for _ in models]
 
   # run the attack for every test example
   for count, i in enumerate(test_indices):
-    target = int(1 - y_test[i] + 0.5)
-    x0 = x_test[i]
 
     # run the attack for every model
     for index, model in enumerate(models):
+
+      _, _, x_test, y_test = big_data[index]
+
+      target = int(1 - y_test[i] + 0.5)
+      x0 = x_test[i]
+
       norm, _ = l0_attack(x0, target, model)
       freqs[index][norm] += 1
 
     for index, freq in enumerate(freqs):
-      print(f"{names[index]}: {freq[0:30]}")
+      print(f"{names[index]}: {freq}")
+
+    if count % 5 == 0 and out_file is not None:
+      out_obj = {'file_names': in_files, 'freq_data': freqs}
+      with open(out_file, "w") as out_handle:
+        json.dump(out_obj, out_handle)
 
   # save the results
   if out_file is not None:

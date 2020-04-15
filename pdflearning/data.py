@@ -2,6 +2,8 @@ from sklearn import datasets
 import numpy as np
 import tensorflow as tf
 
+from coding import load_codes, code_inputs
+
 def cast_float(x):
   return x.astype(np.float32)
 
@@ -47,11 +49,34 @@ def get_hidost():
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
+def get_coded(original, code_file):
+  codes = load_codes(code_file)
+  new_x_train = code_inputs(original[0], codes)
+  new_x_test = code_inputs(original[2], codes)
+
+  return new_x_train, original[1], new_x_test, original[3]
+
+
 def get_data(dataset):
+  colon_index = dataset.find(":")
+  code_file = None
+
+  print(dataset)
+
+  if colon_index >= 0:
+    code_file = dataset[colon_index + 1 : ]
+    dataset = dataset[0:colon_index]
+
+  print(f"dataset: {dataset} codes: {code_file}")
+
   if dataset in ["pdfrate"]:
-    return get_pdfrate()
+    data = get_pdfrate()
   elif dataset in ["hidost"]:
-    return get_hidost()
+    data = get_hidost()
   else:
     quit("invalid dataset")
 
+  if code_file is not None and len(code_file) > 0:
+    data = get_coded(data, code_file)
+
+  return data
