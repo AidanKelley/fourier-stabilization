@@ -7,7 +7,7 @@ import tensorflow_probability as tfp
 
 coin_flip_distribution = tfp.distributions.Binomial(total_count = 1, probs = 0.5)
 
-def stabilize_lp(p, layer, codes=[], N = 100000):
+def stabilize_lp(p, layer, codes=[], N = 1000000):
   p = float(p)
   assert(p > 1)
 

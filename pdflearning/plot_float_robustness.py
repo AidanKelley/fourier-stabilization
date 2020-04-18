@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 
 parser.add_argument("data_file", action="store")
+parser.add_argument("-o", dest="out_dir", action="store")
 
 args = parser.parse_args()
 

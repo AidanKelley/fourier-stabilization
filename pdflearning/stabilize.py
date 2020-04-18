@@ -30,7 +30,7 @@ from stabilization import stabilize_l1, stabilize_lp
 
 from coding import load_codes
 
-model = load_model(x_train, in_file)
+model, _ = load_model(x_train, in_file)
 model.evaluate(x_test, y_test, verbose=2)
 layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)
 
