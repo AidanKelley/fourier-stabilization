@@ -25,12 +25,16 @@ x_train, y_train, x_test, y_test = get_data(dataset)
 import tensorflow as tf
 from tensorflow import keras
 
-from models import load_model, sign
+from models import load_model, load_mnist_model, sign
 from stabilization import stabilize_l1, stabilize_lp
 
 from coding import load_codes
 
-model, _ = load_model(x_train, in_file)
+if dataset == "mnist":
+  model, _ = load_mnist_model(x_train, y_train, in_file, 1024)
+else:
+  model, _ = load_model(x_train, in_file)
+
 model.evaluate(x_test, y_test, verbose=2)
 layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)
 

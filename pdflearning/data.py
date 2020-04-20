@@ -21,15 +21,8 @@ def get_pdfrate():
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
-
-def get_hidost():
-  train_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_train.libsvm", n_features=961, zero_based=True)
-  # test_data = datasets.load_svmlight_file("data/hidost_test.libsvm", n_features=961, zero_based=True)
-  x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
-  # X_test, y_test = test_data[0].toarray(), test_data[1]
-
+def create_partition(x_orig_train, y_orig_train, p_train=0.2):
   # inspired by pberkes answer: https://stackoverflow.com/questions/3674409/how-to-split-partition-a-dataset-into-training-and-test-datasets-for-e-g-cros, 
-
   # seed so we always get the same partition (can be changed later)
   np.random.seed(0)
 
@@ -37,8 +30,7 @@ def get_hidost():
   random_indices = np.random.permutation(x_orig_train.shape[0])
 
   # calculate how much to put in each partition
-
-  test_size = int(x_orig_train.shape[0] / 5)
+  test_size = int(x_orig_train.shape[0] * p_train)
 
   # split up the training and testing data in the same way
   testing_indices = random_indices[:test_size] # all before test_size
@@ -46,6 +38,34 @@ def get_hidost():
 
   x_train, y_train = x_orig_train[training_indices, :], y_orig_train[training_indices]
   x_test, y_test = x_orig_train[testing_indices, :], y_orig_train[testing_indices]
+
+  return x_train, y_train, x_test, y_test
+
+def get_hidost():
+  train_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_train.libsvm", n_features=961, zero_based=True)
+  # test_data = datasets.load_svmlight_file("data/hidost_test.libsvm", n_features=961, zero_based=True)
+  x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
+  # X_test, y_test = test_data[0].toarray(), test_data[1]
+
+  x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
+
+  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
+
+def get_mnist():
+  (x_orig_train, y_orig_train), (_, _) = tf.keras.datasets.mnist.load_data()
+  # create a random partition to be used for testing -- don't touch the actual test data
+  # make it consistent
+
+  # flatten
+  x_orig_train = x_orig_train.reshape((x_orig_train.shape[0], -1))
+
+  # binarize?
+  x_orig_train = 1 - 2 * x_orig_train
+
+  x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train, p_train=1.0/6.0)
+
+  print(x_train.shape)
+  print(y_train.shape)
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
@@ -73,6 +93,8 @@ def get_data(dataset):
     data = get_pdfrate()
   elif dataset in ["hidost"]:
     data = get_hidost()
+  elif dataset in ["mnist"]:
+    data = get_mnist()
   else:
     quit("invalid dataset")
 
