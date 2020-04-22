@@ -7,6 +7,8 @@ from BiasLayer import BiasLayer
 
 import numpy as np
 
+optimizer='adam'
+
 def custom_sigmoid(tensor):
   return 2*tf.math.sigmoid(tensor) - 1
 
@@ -18,7 +20,7 @@ def get_model(input_shape, output_shape, activation, layer_size):
     keras.layers.Dense(output_shape, activation='softmax')
   ])
 
-  model.compile(optimizer='adam',
+  model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
                 metrics=['accuracy'])
   return model
@@ -30,7 +32,7 @@ def get_logit_model(input_shape, output_shape, activation, layer_size):
     keras.layers.Dense(output_shape) # no activation function
   ])
 
-  model.compile(optimizer='adam',
+  model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
                 metrics=['accuracy'])
   return model
@@ -46,7 +48,7 @@ def get_fixed_weight_model(input_shape, output_shape, activation, layer_size):
     keras.layers.Dense(output_shape, activation="softmax", trainable=False)
   ])
 
-  model.compile(optimizer='adam',
+  model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
                 metrics=['accuracy'])
 

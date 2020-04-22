@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 from coding import load_codes, code_inputs
+from gray_codes import do_gray_code, do_binary
 
 def cast_float(x):
   return x.astype(np.float32)
@@ -51,16 +52,19 @@ def get_hidost():
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
-def get_mnist():
+def get_mnist(option=None):
   (x_orig_train, y_orig_train), (_, _) = tf.keras.datasets.mnist.load_data()
   # create a random partition to be used for testing -- don't touch the actual test data
   # make it consistent
 
+  if option is not None:
+    if option == "gray":
+      x_orig_train = do_gray_code(x_orig_train)
+    elif option == "bin":
+      x_orig_train = do_binary(x_orig_train)
+
   # flatten
   x_orig_train = x_orig_train.reshape((x_orig_train.shape[0], -1))
-
-  # binarize?
-  x_orig_train = 1 - 2 * x_orig_train
 
   x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train, p_train=1.0/6.0)
 
@@ -89,12 +93,16 @@ def get_data(dataset):
 
   print(f"dataset: {dataset} codes: {code_file}")
 
-  if dataset in ["pdfrate"]:
+  if dataset == "pdfrate":
     data = get_pdfrate()
-  elif dataset in ["hidost"]:
+  elif dataset == "hidost":
     data = get_hidost()
-  elif dataset in ["mnist"]:
+  elif dataset == "mnist":
     data = get_mnist()
+  elif dataset == "mnist_gray":
+    data = get_mnist("gray")
+  elif dataset == "mnist_bin":
+    data = get_mnist("bin")
   else:
     quit("invalid dataset")
 
