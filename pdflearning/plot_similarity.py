@@ -5,7 +5,7 @@ parser = ArgumentParser()
 parser.add_argument("--multi-in", dest="multi_in", action="store");
 parser.add_argument("-i", dest="in_files", action="append")
 parser.add_argument("-b", dest="bins", action="store")
-parser.add_argument("-o", dest="out_dir", action="append")
+parser.add_argument("-o", dest="out_dir", action="store")
 
 
 args = parser.parse_args()
@@ -37,7 +37,7 @@ else:
     data_json = json.load(data_handle)
     
   data = data_json["data"]
-  labels = [multi_in + "_" + str(count) for count in data_json["counts"]]
+  labels = [str(count) for count in data_json["counts"]]
 
 
 from matplotlib import pyplot as plt
@@ -65,9 +65,9 @@ if out_dir is None:
   plt.show()
 
 else:
- for index, series in data:
+ for index, series in enumerate(data):
    series_string = "\n".join([str(num) for num in series])
-   out_file = out_dir + "/" + labels[i] + ".txt"
+   out_file = out_dir + "/" + labels[index] + ".txt"
    with open(out_file, "w+") as file_handle:
      file_handle.write("x\n")
      file_handle.write(series_string)
