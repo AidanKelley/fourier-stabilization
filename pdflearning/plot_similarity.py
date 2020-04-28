@@ -33,11 +33,11 @@ if multi_in is None:
     labels[index] = data_file
 
 else:
-  with open(multi_in "r") as data_handle:
+  with open(multi_in, "r") as data_handle:
     data_json = json.load(data_handle)
     
   data = data_json["data"]
-  labels = [in_file + "_" + str(count) for count in data_json["counts"]]
+  labels = [multi_in + "_" + str(count) for count in data_json["counts"]]
 
 
 from matplotlib import pyplot as plt
@@ -54,7 +54,7 @@ if out_dir is None:
   print(bins)
 
   for index, hist in enumerate(data):
-    plt.hist(hist, bins=bins)
+    plt.hist(hist, bins=bins, label=labels[index])
 
 
   plt.xlabel("$L^2$ norm of difference of normalized weights and normalized fourier coefficients")
