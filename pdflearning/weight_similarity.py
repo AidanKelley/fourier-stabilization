@@ -38,16 +38,19 @@ layer = tf.keras.models.Model(inputs=model.layers[0].input,
                               outputs = model.layers[0].output)
 
 old_weights = model.get_weights()[0]
-old_normalized = tf.linalg.normalize(old_weights, ord=2, axis=0)
+print(old_weights.shape)
+old_normalized, _ = tf.linalg.normalize(old_weights, ord=2, axis=0)
+print(old_normalized.shape)
 
 counts = []
 data = []
 
 
 for N in sizes:
+  print(f"N={N}")
   new_weights = stabilize_lp(2, layer, codes=[], N=N)
 
-  new_normalized = tf.linalg.normalize(new_weights, ord=2, axis=0)
+  new_normalized, _ = tf.linalg.normalize(new_weights, ord=2, axis=0)
 
   product = tf.multiply(new_normalized, old_normalized)
   inner_products = tf.reduce_sum(product, axis=1)
