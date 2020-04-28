@@ -18,10 +18,9 @@ def stabilize_lp(p, layer, codes=[], N = 1000000):
   # NOTE: Can't Reuse Randomness
 
   input_shape = layer.input_shape
-  sample_shape = list(input_shape)
-  sample_shape[0] = N
+  features = input_shape[1]
 
-  random_point = 1 - 2 * coin_flip_distribution.sample(sample_shape=sample_shape)
+  random_point = 1 - 2 * coin_flip_distribution.sample(sample_shape=(N, features))
 
   # classify the random data (run through the model)
   output = layer.predict(random_point)

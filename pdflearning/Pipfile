@@ -12,6 +12,8 @@ numpy = "*"
 scipy = "*"
 foolbox = "*"
 scikit-learn = "*"
+tensorflow-probability = "*"
+psutil = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,0 +1,389 @@
+	pdfmodel/saved_model.pb	/^:/;"	l
+shape	pdfmodel/saved_model.pb	/^shape:/;"	l
+dense_1/MatMul/ReadVariableOpdense_1/MatMul/ReadVariableOp2	pdfmodel/saved_model.pb	/^dense_1\/MatMul\/ReadVariableOpdense_1\/MatMul\/ReadVariableOp2:$/;"	l
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+$:ÿÿÿÿÿÿÿÿÿ‡::::2	pdfmodel/saved_model.pb	/^$:ÿÿÿÿÿÿÿÿÿ‡::::2:$/;"	l
+ArgumentParser	attack.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	ecc.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	plot_float_robustness.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	plot_robustness.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	plot_similarity.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	replication_codes.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	stabilize.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	test_similarity.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	train.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	train_biases.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	weight_similarity.py	/^from argparse import ArgumentParser$/;"	i
+ArgumentParser	zero_bias.py	/^from argparse import ArgumentParser$/;"	i
+BiasLayer	BiasLayer.py	/^class BiasLayer(layers.Layer):$/;"	c
+BiasLayer	models.py	/^from BiasLayer import BiasLayer$/;"	i
+E_size	test_similarity.py	/^E_size = int(args.E_size)$/;"	v
+FixedWeight	FixedWeight.py	/^class FixedWeight(layers.Layer):$/;"	c
+FixedWeight	models.py	/^from FixedWeight import FixedWeight$/;"	i
+LinfPGD	foolbox_ex.py	/^from foolbox.attacks import LinfPGD$/;"	i
+N	ecc.py	/^N = 100000$/;"	v
+TensorFlowModel	foolbox_ex.py	/^from foolbox import TensorFlowModel, accuracy, samples$/;"	i
+__init__	BiasLayer.py	/^  def __init__(self, activation="linear"):$/;"	m	class:BiasLayer
+__init__	FixedWeight.py	/^  def __init__(self, out_dim, activation):$/;"	m	class:FixedWeight
+abort_early	attack.py	/^                             abort_early = True)$/;"	v
+accuracy	foolbox_ex.py	/^from foolbox import TensorFlowModel, accuracy, samples$/;"	i
+activation	train.py	/^activation = args.activation$/;"	v
+all_combinations	coding.py	/^def all_combinations(n, p):$/;"	f
+all_combinations	ecc.py	/^from coding import save_codes, all_combinations$/;"	i
+all_data_together	plot_similarity.py	/^all_data_together = np.hstack(data)$/;"	v
+all_freqs	plot_robustness.py	/^all_freqs = [freq[:clip] for freq in all_freqs]$/;"	v
+all_freqs	plot_robustness.py	/^all_freqs = data["freq_data"]$/;"	v
+all_hists	plot_robustness.py	/^all_hists = [make_hist(freq) for freq in all_freqs]$/;"	v
+all_t_hats	ecc.py	/^all_t_hats = [[] for _ in sets]$/;"	v
+apply_code	coding.py	/^def apply_code(input_vector, code):$/;"	f
+apply_codes	coding.py	/^def apply_codes(inputs, codes):$/;"	f
+args	attack.py	/^args = parser.parse_args()$/;"	v
+args	ecc.py	/^args = parser.parse_args()$/;"	v
+args	plot_float_robustness.py	/^args = parser.parse_args()$/;"	v
+args	plot_robustness.py	/^args = parser.parse_args()$/;"	v
+args	plot_similarity.py	/^args = parser.parse_args()$/;"	v
+args	replication_codes.py	/^args = parser.parse_args()$/;"	v
+args	stabilize.py	/^args = parser.parse_args()$/;"	v
+args	test_similarity.py	/^args = parser.parse_args()$/;"	v
+args	train.py	/^args = parser.parse_args()$/;"	v
+args	train_biases.py	/^args = parser.parse_args()$/;"	v
+args	weight_similarity.py	/^args = parser.parse_args()$/;"	v
+args	zero_bias.py	/^args = parser.parse_args()$/;"	v
+attack	attack.py	/^attack = args.attack$/;"	v
+attack	foolbox_ex.py	/^    attack = LinfPGD()$/;"	v
+big_data	attack.py	/^big_data = [get_data(dataset) for dataset in datasets]$/;"	v
+bin_count	plot_similarity.py	/^  bin_count = 16$/;"	v
+bin_count	plot_similarity.py	/^  bin_count = int(args.bins)$/;"	v
+binary_search_steps	attack.py	/^                             binary_search_steps=10,$/;"	v
+bins	plot_similarity.py	/^bins = np.histogram(all_data_together, bins=bin_count)[1]$/;"	v
+brendel_attack	attack.py	/^      brendel_attack = foolbox.attacks.L1BrendelBethgeAttack()$/;"	v
+build	BiasLayer.py	/^  def build(self, input_shape):$/;"	m	class:BiasLayer
+build	FixedWeight.py	/^  def build(self, input_shape):$/;"	m	class:FixedWeight
+call	BiasLayer.py	/^  def call(self, inputs):$/;"	m	class:BiasLayer
+call	FixedWeight.py	/^  def call(self, inputs):$/;"	m	class:FixedWeight
+carlini_attack	attack.py	/^      carlini_attack = foolbox.attacks.CarliniWagnerL2Attack(foolbox_model)$/;"	v
+cast_float	data.py	/^def cast_float(x):$/;"	f
+cast_int	data.py	/^def cast_int(x):$/;"	f
+clip	plot_robustness.py	/^  clip = int(args.clip)$/;"	v
+clip	plot_robustness.py	/^  clip = len(all_freqs[0])$/;"	v
+coarse	train.py	/^  coarse = epochs$/;"	v
+coarse	train.py	/^coarse = int(args.checkpoints)$/;"	v
+code_coefficients	stabilization.py	/^def code_coefficients(layer, codes, test_data=None, predictions=None, N=100000):$/;"	f
+code_file	stabilize.py	/^code_file = args.codes$/;"	v
+code_inputs	coding.py	/^def code_inputs(inputs, codes):$/;"	f
+code_inputs	data.py	/^from coding import load_codes, code_inputs$/;"	i
+coded	gray_codes.py	/^  coded = do_gray_code(x)$/;"	v
+codes	ecc.py	/^codes = [entry[1] for entry in largest]$/;"	v
+codes	replication_codes.py	/^codes = [[i] for i in range(n)]$/;"	v
+codes	stabilize.py	/^  codes = None$/;"	v
+codes	stabilize.py	/^  codes = load_codes(code_file)$/;"	v
+codes_to_try	ecc.py	/^codes_to_try = all_combinations(input_shape[1], 2) + all_combinations(input_shape[1], 1)$/;"	v
+coin_flip_distribution	ecc.py	/^coin_flip_distribution = tfp.distributions.Binomial(total_count = 1, probs = 0.5)$/;"	v
+coin_flip_distribution	stabilization.py	/^coin_flip_distribution = tfp.distributions.Binomial(total_count = 1, probs = 0.5)$/;"	v
+confidence	attack.py	/^                             confidence = 0,$/;"	v
+coordinates	plot_robustness.py	/^    coordinates = "".join([f"{domain[i]} {hist[i]}\\n" for i, _ in enumerate(hist)])$/;"	v
+create_partition	data.py	/^def create_partition(x_orig_train, y_orig_train, p_train=0.2):$/;"	f
+custom_sigmoid	models.py	/^def custom_sigmoid(tensor):$/;"	f
+data	plot_float_robustness.py	/^  data = json.load(data_handle)$/;"	v
+data	plot_robustness.py	/^  data = json.load(data_handle)$/;"	v
+data	plot_similarity.py	/^  data = [[] for _ in in_files]$/;"	v
+data	plot_similarity.py	/^  data = data_json["data"]$/;"	v
+data	test_similarity.py	/^data = total_ratios.numpy().tolist()$/;"	v
+data_file	plot_float_robustness.py	/^data_file = args.data_file$/;"	v
+data_file	plot_robustness.py	/^data_file = args.data_file$/;"	v
+data_json	plot_similarity.py	/^      data_json = json.load(data_handle)$/;"	v
+data_json	plot_similarity.py	/^    data_json = json.load(data_handle)$/;"	v
+data_shape	attack.py	/^  data_shape = x_test.shape[1:]$/;"	v
+data_shape	train_biases.py	/^data_shape = x_train.shape[1:]$/;"	v
+data_size	attack.py	/^data_size = big_data[0][2].shape[0]$/;"	v
+dataset	ecc.py	/^dataset = args.dataset$/;"	v
+dataset	stabilize.py	/^dataset = args.dataset$/;"	v
+dataset	test_similarity.py	/^dataset = args.dataset$/;"	v
+dataset	train.py	/^dataset = args.dataset$/;"	v
+dataset	train_biases.py	/^dataset = args.dataset$/;"	v
+dataset	weight_similarity.py	/^dataset = args.dataset$/;"	v
+dataset	zero_bias.py	/^dataset = args.dataset$/;"	v
+datasets	attack.py	/^datasets = args.datasets$/;"	v
+datasets	change_sign.py	/^from sklearn import datasets$/;"	i
+datasets	data.py	/^from sklearn import datasets$/;"	i
+delta	test_similarity.py	/^  delta = new_weights - old_weights$/;"	v
+delta_norms	test_similarity.py	/^  delta_norms = tf.norm(delta, ord=2, axis=0)$/;"	v
+delta_ratios	test_similarity.py	/^  delta_ratios = delta_norms \/ old_norms$/;"	v
+do_all	attack.py	/^do_all = args.do_all$/;"	v
+do_binary	data.py	/^from gray_codes import do_gray_code, do_binary$/;"	i
+do_binary	gray_codes.py	/^def do_binary(x):$/;"	f
+do_gray_code	data.py	/^from gray_codes import do_gray_code, do_binary$/;"	i
+do_gray_code	gray_codes.py	/^def do_gray_code(x):$/;"	f
+domain	plot_robustness.py	/^domain = [i for i in range(len(all_hists[0]))]$/;"	v
+ep	attack.py	/^import eagerpy as ep$/;"	i
+ep	foolbox_ex.py	/^import eagerpy as ep$/;"	i
+epochs	train.py	/^epochs = int(args.epochs)$/;"	v
+epsilons	foolbox_ex.py	/^    epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.5, 1.0]$/;"	v
+file_names	plot_robustness.py	/^  file_names = data["file_names"]$/;"	v
+fmodel	foolbox_ex.py	/^    fmodel = TensorFlowModel(model, bounds=(0, 255), preprocessing=pre)$/;"	v
+foolbox	attack.py	/^import foolbox$/;"	i
+foolbox_model	attack.py	/^    foolbox_model = foolbox.models.TensorFlowModel(model, bounds=(-2, 2))$/;"	v
+freqs	attack.py	/^  freqs = [[0 for _ in range(max_data_dim)] for _ in models]$/;"	v
+get_coded	data.py	/^def get_coded(original, code_file):$/;"	f
+get_data	attack.py	/^from data import get_data$/;"	i
+get_data	data.py	/^def get_data(dataset):$/;"	f
+get_data	ecc.py	/^from data import get_data$/;"	i
+get_data	stabilize.py	/^from data import get_data$/;"	i
+get_data	test_similarity.py	/^from data import get_data$/;"	i
+get_data	train.py	/^from data import get_data$/;"	i
+get_data	train_biases.py	/^from data import get_data$/;"	i
+get_data	weight_similarity.py	/^from data import get_data$/;"	i
+get_data	zero_bias.py	/^from data import get_data$/;"	i
+get_fixed_weight_model	models.py	/^def get_fixed_weight_model(input_shape, output_shape, activation, layer_size):$/;"	f
+get_hidost	data.py	/^def get_hidost():$/;"	f
+get_logit_model	models.py	/^def get_logit_model(input_shape, output_shape, activation, layer_size):$/;"	f
+get_mnist	data.py	/^def get_mnist(option=None):$/;"	f
+get_model	change_sign.py	/^from pdf import sign, get_model$/;"	i
+get_model	ecc.py	/^from models import get_model$/;"	i
+get_model	models.py	/^def get_model(input_shape, output_shape, activation, layer_size):$/;"	f
+get_model	test_similarity.py	/^from models import get_model, sign$/;"	i
+get_model	zero_bias.py	/^from models import get_model, sign$/;"	i
+get_new_mnist_model	models.py	/^def get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor=None):$/;"	f
+get_new_mnist_model	train.py	/^from models import get_new_model, get_new_mnist_model, load_model, load_mnist_model$/;"	i
+get_new_mnist_model	train_biases.py	/^from models import load_model, get_new_model, load_mnist_model, get_new_mnist_model$/;"	i
+get_new_model	models.py	/^def get_new_model(x_train, activation_name, flavor=None):$/;"	f
+get_new_model	train.py	/^from models import get_new_model, get_new_mnist_model, load_model, load_mnist_model$/;"	i
+get_new_model	train_biases.py	/^from models import load_model, get_new_model, load_mnist_model, get_new_mnist_model$/;"	i
+get_new_model_helper	models.py	/^def get_new_model_helper(input_shape, output_shape, activation_name, layer_size, flavor=None):$/;"	f
+get_pdfrate	data.py	/^def get_pdfrate():$/;"	f
+get_sign_model	change_sign.py	/^def get_sign_model():$/;"	f
+grad	models.py	/^  def grad(dx):$/;"	f	function:sign
+heapq	ecc.py	/^import heapq$/;"	i
+heuristic	ecc.py	/^  heuristic = float(tf.norm(t_hats, ord=1)) # compute the L_1 norm$/;"	v
+heuristics	ecc.py	/^heuristics = [0 for _ in sets]$/;"	v
+in_file	ecc.py	/^in_file = args.in_file$/;"	v
+in_file	stabilize.py	/^in_file = args.in_file$/;"	v
+in_file	train.py	/^in_file = args.in_file$/;"	v
+in_file	train_biases.py	/^in_file = args.in_file$/;"	v
+in_file	weight_similarity.py	/^in_file = args.in_file$/;"	v
+in_file	zero_bias.py	/^in_file = args.in_file$/;"	v
+in_files	attack.py	/^in_files = args.in_files$/;"	v
+in_files	plot_similarity.py	/^in_files = args.in_files$/;"	v
+initial_const	attack.py	/^                             initial_const = 0.0001,$/;"	v
+input_shape	ecc.py	/^input_shape = layer.input_shape$/;"	v
+json	attack.py	/^import json$/;"	i
+json	coding.py	/^import json$/;"	i
+json	plot_float_robustness.py	/^import json$/;"	i
+json	plot_robustness.py	/^import json$/;"	i
+json	plot_similarity.py	/^import json$/;"	i
+json	test_similarity.py	/^import json$/;"	i
+json	weight_similarity.py	/^import json$/;"	i
+keras	attack.py	/^from tensorflow import keras$/;"	i
+keras	change_sign.py	/^from tensorflow import keras$/;"	i
+keras	ecc.py	/^from tensorflow import keras$/;"	i
+keras	models.py	/^from tensorflow import keras$/;"	i
+keras	stabilization.py	/^from tensorflow import keras$/;"	i
+keras	stabilize.py	/^from tensorflow import keras$/;"	i
+keras	test_similarity.py	/^from tensorflow import keras$/;"	i
+keras	train.py	/^from tensorflow import keras$/;"	i
+keras	train_biases.py	/^from tensorflow import keras$/;"	i
+keras	weight_similarity.py	/^from tensorflow import keras$/;"	i
+keras	zero_bias.py	/^from tensorflow import keras$/;"	i
+l0_attack	attack.py	/^from attacks import l0_attack$/;"	i
+l0_attack	attacks.py	/^def l0_attack(x0, target, model):$/;"	f
+labels	plot_robustness.py	/^labels = data["file_names"]$/;"	v
+labels	plot_similarity.py	/^  labels = [[] for _ in in_files]$/;"	v
+labels	plot_similarity.py	/^  labels = [in_file + "_" + str(count) for count in data_json["counts"]]$/;"	v
+largest	ecc.py	/^largest = heapq.nlargest(135, heuristics, key=lambda entry: entry[0])$/;"	v
+layer	ecc.py	/^layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)$/;"	v
+layer	stabilize.py	/^layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)$/;"	v
+layer	test_similarity.py	/^  layer = keras.models.Model(inputs = test_model.layers[0].input, outputs = test_model.layers[0].output)$/;"	v
+layers	BiasLayer.py	/^from tensorflow.keras import layers$/;"	i
+layers	FixedWeight.py	/^from tensorflow.keras import layers$/;"	i
+learning_rate	attack.py	/^                             learning_rate = 0.01,$/;"	v
+lens	attack.py	/^lens = [len(name) for name in in_files]$/;"	v
+load_codes	coding.py	/^def load_codes(file):$/;"	f
+load_codes	data.py	/^from coding import load_codes, code_inputs$/;"	i
+load_codes	stabilize.py	/^from coding import load_codes$/;"	i
+load_mnist_model	models.py	/^def load_mnist_model(x_train, y_train, file_name, layer_size, flavor=None):$/;"	f
+load_mnist_model	stabilize.py	/^from models import load_model, load_mnist_model, sign$/;"	i
+load_mnist_model	train.py	/^from models import get_new_model, get_new_mnist_model, load_model, load_mnist_model$/;"	i
+load_mnist_model	train_biases.py	/^from models import load_model, get_new_model, load_mnist_model, get_new_mnist_model$/;"	i
+load_mnist_model	weight_similarity.py	/^from models import load_mnist_model$/;"	i
+load_model	attack.py	/^from models import load_model$/;"	i
+load_model	models.py	/^def load_model(x_train, file_name, flavor=None):$/;"	f
+load_model	stabilize.py	/^from models import load_model, load_mnist_model, sign$/;"	i
+load_model	train.py	/^from models import get_new_model, get_new_mnist_model, load_model, load_mnist_model$/;"	i
+load_model	train_biases.py	/^from models import load_model, get_new_model, load_mnist_model, get_new_mnist_model$/;"	i
+load_model_helper	models.py	/^def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):$/;"	f
+make_hist	plot_float_robustness.py	/^def make_hist(norms):$/;"	f
+make_hist	plot_robustness.py	/^def make_hist(freqs):$/;"	f
+matplotlib	change_sign.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	test_similarity.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	train.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	train_biases.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	weight_similarity.py	/^import matplotlib.pyplot as plt$/;"	i
+max_data_dim	attack.py	/^max_data_dim = max([data[0].shape[1] for data in big_data])$/;"	v
+max_iterations	attack.py	/^                             max_iterations = 100,$/;"	v
+max_len	attack.py	/^max_len = max(lens)$/;"	v
+max_val	plot_float_robustness.py	/^max_val = max(max(min_norms)) + 1$/;"	v
+min_norms	attack.py	/^  min_norms = [[] for _ in models]$/;"	v
+min_norms	plot_float_robustness.py	/^min_norms = data["min_norms"]$/;"	v
+model	change_sign.py	/^  model = get_sign_model()$/;"	v
+model	ecc.py	/^model = get_model(input_shape=x_train.shape[1:])$/;"	v
+model	foolbox_ex.py	/^    model = tf.keras.applications.ResNet50(weights="imagenet")$/;"	v
+model	test_similarity.py	/^  model = get_model(input_shape=x_train.shape[1:])$/;"	v
+model	train.py	/^    model = get_new_mnist_model(x_train, y_train, activation, 1024)$/;"	v
+model	train.py	/^    model = get_new_model(x_train, activation)$/;"	v
+model	train_biases.py	/^  model = get_new_mnist_model(x_train, y_train, activation, 1024, "fixed_weight_model")$/;"	v
+model	train_biases.py	/^  model = get_new_model(x_train, activation, "fixed_weight_model")$/;"	v
+model	weight_similarity.py	/^  model = load_mnist_model()$/;"	v
+model	zero_bias.py	/^model = get_model(input_shape=x_train.shape[1:])$/;"	v
+models	attack.py	/^models = []$/;"	v
+mpl	plot_float_robustness.py	/^import matplotlib as mpl$/;"	i
+mpl	plot_robustness.py	/^import matplotlib as mpl$/;"	i
+mpl	plot_similarity.py	/^import matplotlib as mpl$/;"	i
+multi_in	plot_similarity.py	/^multi_in = args.multi_in$/;"	v
+n	replication_codes.py	/^n = int(args.n)$/;"	v
+n_trials	attack.py	/^n_trials = int(args.trials)$/;"	v
+names	attack.py	/^names = [name + " " * (max_len - len(name)) for name in in_files]$/;"	v
+names	plot_float_robustness.py	/^names = data["file_names"]$/;"	v
+new_weights	stabilize.py	/^  new_weights = stabilize_l1(layer, codes)$/;"	v
+new_weights	stabilize.py	/^  new_weights = stabilize_lp(2, layer, codes)$/;"	v
+new_weights	test_similarity.py	/^  new_weights = stabilize_lp(2, layer, N=E_size)$/;"	v
+norm	stabilize.py	/^norm = args.norm$/;"	v
+norms	attack.py	/^      norms = tf.norm(x_rand - x_adversarial, ord=1, axis=1)$/;"	v
+norms	attack.py	/^      norms = tf.norm(x_rand-x_adversarial, axis=1)$/;"	v
+np	attack.py	/^import numpy as np$/;"	i
+np	attacks.py	/^import numpy as np$/;"	i
+np	change_sign.py	/^import numpy as np$/;"	i
+np	coding.py	/^import numpy as np$/;"	i
+np	data.py	/^import numpy as np$/;"	i
+np	ecc.py	/^import numpy as np$/;"	i
+np	gray_codes.py	/^import numpy as np$/;"	i
+np	models.py	/^import numpy as np$/;"	i
+np	plot_float_robustness.py	/^import numpy as np$/;"	i
+np	plot_similarity.py	/^import numpy as np$/;"	i
+np	stabilization.py	/^import numpy as np$/;"	i
+np	test_similarity.py	/^import numpy as np$/;"	i
+np	train.py	/^import numpy as np$/;"	i
+np	train_biases.py	/^import numpy as np$/;"	i
+np	weight_similarity.py	/^import numpy as np$/;"	i
+old_norms	test_similarity.py	/^  old_norms = tf.norm(old_weights, ord=2, axis=0)$/;"	v
+old_weights	test_similarity.py	/^  old_weights = model.get_weights()[0]$/;"	v
+optimizer	models.py	/^optimizer='adam'$/;"	v
+out_codes_file	ecc.py	/^out_codes_file = args.out_codes_file$/;"	v
+out_dir	plot_robustness.py	/^out_dir = args.out_dir$/;"	v
+out_dir	plot_similarity.py	/^out_dir = args.out_dir$/;"	v
+out_file	attack.py	/^out_file = args.out_file$/;"	v
+out_file	plot_robustness.py	/^    out_file = out_dir + "\/" + file_names[index] + ".txt"$/;"	v
+out_file	plot_similarity.py	/^   out_file = out_dir + "\/" + labels[i] + ".txt"$/;"	v
+out_file	replication_codes.py	/^out_file = args.out_file$/;"	v
+out_file	stabilize.py	/^out_file = args.out_file$/;"	v
+out_file	test_similarity.py	/^out_file = args.out_file$/;"	v
+out_file	train.py	/^out_file = args.out_file$/;"	v
+out_file	train_biases.py	/^out_file = args.out_file$/;"	v
+out_file	weight_similarity.py	/^out_file = args.out_file$/;"	v
+out_file	zero_bias.py	/^out_file = args.out_file$/;"	v
+out_model_file	ecc.py	/^out_model_file = args.out_model_file$/;"	v
+out_obj	attack.py	/^      out_obj = {'file_names': in_files, 'freq_data': freqs}$/;"	v
+out_obj	attack.py	/^    out_obj = {'file_names': in_files, 'freq_data': freqs}$/;"	v
+out_obj	attack.py	/^    out_obj = {'file_names': in_files, 'min_norms': min_norms}$/;"	v
+output	ecc.py	/^output = layer.predict(test_data)$/;"	v
+parity_codes	ecc.py	/^  parity_codes = tf.math.reduce_prod(relevant_columns, axis=1)$/;"	v
+parity_codes	ecc.py	/^  parity_codes = tf.reshape(parity_codes, (N, 1))$/;"	v
+parser	attack.py	/^parser = ArgumentParser()$/;"	v
+parser	ecc.py	/^parser = ArgumentParser()$/;"	v
+parser	plot_float_robustness.py	/^parser = ArgumentParser()$/;"	v
+parser	plot_robustness.py	/^parser = ArgumentParser()$/;"	v
+parser	plot_similarity.py	/^parser = ArgumentParser()$/;"	v
+parser	replication_codes.py	/^parser = ArgumentParser()$/;"	v
+parser	stabilize.py	/^parser = ArgumentParser()$/;"	v
+parser	test_similarity.py	/^parser = ArgumentParser()$/;"	v
+parser	train.py	/^parser = ArgumentParser()$/;"	v
+parser	train_biases.py	/^parser = ArgumentParser()$/;"	v
+parser	weight_similarity.py	/^parser = ArgumentParser()$/;"	v
+parser	zero_bias.py	/^parser = ArgumentParser()$/;"	v
+plt	change_sign.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	plot_float_robustness.py	/^from matplotlib import pyplot as plt$/;"	i
+plt	plot_robustness.py	/^from matplotlib import pyplot as plt$/;"	i
+plt	plot_similarity.py	/^from matplotlib import pyplot as plt$/;"	i
+plt	test_similarity.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	train.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	train_biases.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	weight_similarity.py	/^import matplotlib.pyplot as plt$/;"	i
+pre	foolbox_ex.py	/^    pre = dict(flip_axis=-1, mean=[104.0, 116.0, 123.0])  # RGB to BGR$/;"	v
+relevant_columns	ecc.py	/^  relevant_columns = tf.gather(test_data, index_set, axis=1)$/;"	v
+robust_accuracy	foolbox_ex.py	/^    robust_accuracy = 1 - success.float32().mean(axis=-1)$/;"	v
+sample_shape	ecc.py	/^sample_shape = list(input_shape)$/;"	v
+samples	foolbox_ex.py	/^from foolbox import TensorFlowModel, accuracy, samples$/;"	i
+save_codes	coding.py	/^def save_codes(codes, file):$/;"	f
+save_codes	ecc.py	/^from coding import save_codes, all_combinations$/;"	i
+save_codes	replication_codes.py	/^from coding import save_codes$/;"	i
+save_status	status.py	/^def save_status(status_file, status):$/;"	f
+save_status	train.py	/^from status import save_status$/;"	i
+select_bit	gray_codes.py	/^def select_bit(x, bit_index):$/;"	f
+series_string	plot_similarity.py	/^   series_string = "\\n".join([str(num) for num in series])$/;"	v
+sets	ecc.py	/^sets = [[] for _ in codes_to_try]$/;"	v
+sigmoid_model	change_sign.py	/^  sigmoid_model = get_model()$/;"	v
+sign	change_sign.py	/^from pdf import sign, get_model$/;"	i
+sign	models.py	/^def sign(tensor):$/;"	f
+sign	stabilize.py	/^from models import load_model, load_mnist_model, sign$/;"	i
+sign	test_similarity.py	/^from models import get_model, sign$/;"	i
+sign	zero_bias.py	/^from models import get_model, sign$/;"	i
+sizes	weight_similarity.py	/^sizes = args.sizes$/;"	v
+stabilize_l1	stabilization.py	/^def stabilize_l1(layer, codes=[]):$/;"	f
+stabilize_l1	stabilize.py	/^from stabilization import stabilize_l1, stabilize_lp$/;"	i
+stabilize_l1	zero_bias.py	/^from stabilization import stabilize_l1$/;"	i
+stabilize_lp	stabilization.py	/^def stabilize_lp(p, layer, codes=[], N = 1000000):$/;"	f
+stabilize_lp	stabilize.py	/^from stabilization import stabilize_l1, stabilize_lp$/;"	i
+stabilize_lp	test_similarity.py	/^from stabilization import stabilize_lp$/;"	i
+status_file	train.py	/^status_file = args.status_file$/;"	v
+t_hats	ecc.py	/^  t_hats = 1\/N * tf.linalg.matmul(parity_codes, output, transpose_a = True)$/;"	v
+target	attack.py	/^      target = int(1 - y_test[i] + 0.5)$/;"	v
+test_data	change_sign.py	/^  test_data = datasets.load_svmlight_file("..\/pdf_dataset\/data\/pdfrateB_test.libsvm", n_features=135, zero_based=True)$/;"	v
+test_data	ecc.py	/^test_data = 1 - 2 * coin_flip_distribution.sample(sample_shape=sample_shape)$/;"	v
+test_indices	attack.py	/^  test_indices = np.random.choice(data_size, size=n_trials, replace=False)$/;"	v
+test_indices	attack.py	/^  test_indices = range(data_size)$/;"	v
+test_model	test_similarity.py	/^  test_model = get_model(input_shape=x_train.shape[1:], activation=sign)$/;"	v
+tf	BiasLayer.py	/^import tensorflow as tf$/;"	i
+tf	FixedWeight.py	/^import tensorflow as tf$/;"	i
+tf	attack.py	/^import tensorflow as tf$/;"	i
+tf	attacks.py	/^import tensorflow as tf$/;"	i
+tf	change_sign.py	/^import tensorflow as tf$/;"	i
+tf	data.py	/^import tensorflow as tf$/;"	i
+tf	ecc.py	/^import tensorflow as tf$/;"	i
+tf	foolbox_ex.py	/^import tensorflow as tf$/;"	i
+tf	models.py	/^import tensorflow as tf$/;"	i
+tf	stabilization.py	/^import tensorflow as tf$/;"	i
+tf	stabilize.py	/^import tensorflow as tf$/;"	i
+tf	test_similarity.py	/^import tensorflow as tf$/;"	i
+tf	train.py	/^import tensorflow as tf$/;"	i
+tf	train_biases.py	/^import tensorflow as tf$/;"	i
+tf	weight_similarity.py	/^import tensorflow as tf$/;"	i
+tf	zero_bias.py	/^import tensorflow as tf$/;"	i
+tfp	change_sign.py	/^import tensorflow_probability as tfp$/;"	i
+tfp	ecc.py	/^import tensorflow_probability as tfp$/;"	i
+tfp	stabilization.py	/^import tensorflow_probability as tfp$/;"	i
+to_binary	gray_codes.py	/^def to_binary(x, width):$/;"	f
+total_iter	train.py	/^total_iter = int((epochs + coarse - 1)\/coarse)$/;"	v
+total_ratios	test_similarity.py	/^    total_ratios = delta_ratios$/;"	v
+total_ratios	test_similarity.py	/^    total_ratios = tf.concat([total_ratios, delta_ratios], axis=0)$/;"	v
+total_ratios	test_similarity.py	/^total_ratios = None$/;"	v
+trials	test_similarity.py	/^trials = int(args.n_models)$/;"	v
+unpack	attack.py	/^                             unpack = True,$/;"	v
+w	train_biases.py	/^w = orig_model.get_weights()$/;"	v
+weights	stabilize.py	/^weights = model.get_weights()$/;"	v
+weights	test_similarity.py	/^  weights = model.get_weights()$/;"	v
+weights	zero_bias.py	/^weights = model.get_weights()$/;"	v
+x	gray_codes.py	/^  x = np.array(x_array)$/;"	v
+x0	attack.py	/^      x0 = x_test[i]$/;"	v
+x_adversarial	attack.py	/^      x_adversarial = carlini_attack(x_rand, y_rand,$/;"	v
+x_array	gray_codes.py	/^  x_array = [[i + 5*j for i in range(5)] for j in range(3)]$/;"	v
+x_rand	attack.py	/^    x_rand = tf.convert_to_tensor(x_rand, dtype=tf.float32)$/;"	v
+x_rand	attack.py	/^    x_rand = x_test[test_indices]$/;"	v
+x_test	attack.py	/^  x_test = big_data[index][2]$/;"	v
+x_test	change_sign.py	/^  x_test = 1 - 2*x_test$/;"	v
+x_train	attack.py	/^  x_train = big_data[index][0]$/;"	v
+y_rand	attack.py	/^    y_rand = tf.convert_to_tensor(y_rand, dtype=tf.int32)$/;"	v
+y_rand	attack.py	/^    y_rand = y_test[test_indices]$/;"	v
