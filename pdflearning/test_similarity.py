@@ -6,14 +6,14 @@ parser.add_argument("dataset", action="store")
 # parser.add_argument("in", action="store", dest="in_file")
 parser.add_argument("-o", dest="out_file", action="store")
 parser.add_argument("-n", dest="n_models", action="store")
-parser.add_argument("-N", dest="E_size", action="store")
+parser.add_argument("-N", dest="sizes", action="append")
 
 args = parser.parse_args()
 
 dataset = args.dataset
 out_file = args.out_file
 trials = int(args.n_models)
-E_size = int(args.E_size)
+sizes = [int(size) for size in args.sizes]
 
 import tensorflow as tf
 from tensorflow import keras

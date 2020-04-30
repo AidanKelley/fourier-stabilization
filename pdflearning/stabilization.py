@@ -1,29 +1,43 @@
 import tensorflow as tf
-from tensorflow import keras
-
 import numpy as np
 
-import tensorflow_probability as tfp
-
-coin_flip_distribution = tfp.distributions.Binomial(total_count = 1, probs = 0.5)
-
 def stabilize_lp(p, layer, codes=[], N = 1000000):
+  """
+  Runs the Fourier Stabilization process in the l^p norm
+
+  ...
+
+  Parameters
+  p: float > 1
+    the norm to use
+  layer
+    the layer of the model that is getting stabilized
+  codes: [[int]]
+    potentially, a list of linear codes to use when doing the stabilization process
+    this is a list of lists, where each of the inner lists is a set of indices
+    then, this code is the linear polynomial on these indices
+  N: int
+    the number of terms to use in the approximation of each coefficient
+  """
+  
+  # find the conjugate q norm
   p = float(p)
   assert(p > 1)
 
-  q = 1/(1 - 1/p)
-  print(f"p = {p}, q = {q}")
+  q = p/(p-1)
+  print(f"p = {p}, q = {q}, 1/p + 1/q = {1/p + 1/q}")
 
-  # generate the random data
-  # NOTE: Can't Reuse Randomness
-
+  # get the number of features
   input_shape = layer.input_shape
   features = input_shape[1]
 
-  random_point = 1 - 2 * coin_flip_distribution.sample(sample_shape=(N, features))
+  # generate the random data
+  random_point = 1 - 2 * np.random.binomial(1, 0.5, (N, features)).astype(np.float32)
 
   # classify the random data (run through the model)
   output = layer.predict(random_point)
+
+  print(f"output/predictions = {output}")
 
   # calculate the t_hats
   t_hats = 1/N * tf.linalg.matmul(random_point, output, transpose_a = True)
