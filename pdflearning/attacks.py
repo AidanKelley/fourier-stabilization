@@ -1,6 +1,71 @@
 import tensorflow as tf
 import numpy as np
 
+def l0_multiclass_attack(x0, orig_class, num_classes, model):
+  x = tf.cast(x0, tf.float32)
+  
+  dim = tf.shape(x0)[0]
+  flip_diag_mat = tf.ones((dim, dim)) - 2 * tf.eye(dim)
+
+  target = 0
+  other_indices = [*range(num_classes)]
+  other_indices.remove(target)
+  
+  count = 0
+  while count < 20:
+    count += 1
+  # # # compute forward derivative # # #
+    x_2d = tf.reshape(x, (1, dim))
+    print(x_2d)
+
+    # get the initial prediction
+    initial_logits = model.predict(x_2d)[0]
+    print(initial_logits)
+
+    # get the prediction after flipping each of the bits
+    x_tiled = tf.tile(x_2d, (dim, 1))
+    # note: this is element-wise multiplication and not matrix multiplication
+    x_tiled_one_flipped = tf.multiply(flip_diag_mat, x_tiled)
+    print(x_tiled_one_flipped)
+    changed_logits = model.predict(x_tiled_one_flipped)
+    print(changed_logits)
+
+    # find "gradient", delta 
+    gradient = (changed_logits - initial_logits)
+
+  # # # compute the saliency map
+    gradient_target = gradient[:, target]
+    gradient_others = gradient[:, other_indices]
+    sum_gradient_others = tf.reduce_sum(gradient_others, axis=1)
+
+    print(sum_gradient_others)
+
+    # we return zero if gradient target  < 0 or sum_gradient_others > 0
+    # these are 0 if one of the conditions is violated
+    target_mask = tf.math.greater(gradient_target, 0)
+    others_mask = tf.math.less(sum_gradient_others, 0)
+    # mask is 1 iff NOT(target < 0 or sum > 0)
+    mask = tf.math.logical_and(target_mask, others_mask)
+    float_mask = tf.cast(mask, tf.float32)
+
+    # elementwise multiplication
+    # multiply by 1 so that this is positive
+    saliency_map = -1 * gradient_target * sum_gradient_others * float_mask
+    
+  # # # pick two points of max saliency
+    _, maximal_indices = tf.math.top_k(saliency_map, k=100)
+
+    print(maximal_indices)
+
+    # for every index, flip that index in x
+    print(x)
+    for index in maximal_indices:
+      x = flip_diag_mat[index, :] * x
+    print(x)
+
+  return 10000000000000, x - x0
+  
+
 def l0_attack(x0, target, model):
   
   n = tf.shape(x0)[0]
@@ -34,7 +99,6 @@ def l0_attack(x0, target, model):
     x_all_eta = all_eta * x_mult
     # print(x_all_eta)
     Zx_eta = model.predict(x_all_eta)
-
 
     alpha = Zx_eta[:, target] - Zx[target]
     beta = Zx_eta[:, not_target] - Zx[not_target]
