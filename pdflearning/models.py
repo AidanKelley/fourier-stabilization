@@ -176,7 +176,7 @@ def get_new_model_helper(input_shape, output_shape, activation_name, layer_size,
   """
 
   # find the activation function
-  if activation_name == "custom_sigmoid" or activation_name = "scaled_sigmoid":
+  if activation_name == "custom_sigmoid" or activation_name == "scaled_sigmoid":
     activation = custom_sigmoid
   elif activation_name == "sign":
     activation = sign
