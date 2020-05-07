@@ -30,7 +30,7 @@ from stabilization import stabilize_l1, stabilize_lp
 
 from coding import load_codes
 
-if dataset == "mnist":
+if "mnist" in dataset:
   model, _ = load_mnist_model(x_train, y_train, in_file, 1024)
 else:
   model, _ = load_model(x_train, in_file)

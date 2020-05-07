@@ -4,6 +4,7 @@ import tensorflow as tf
 
 from coding import load_codes, code_inputs
 from gray_codes import do_gray_code, do_binary
+from uniform_coding import do_uniform_code
 
 def cast_float(x):
   return x.astype(np.float32)
@@ -62,6 +63,15 @@ def get_mnist(option=None):
       x_orig_train = do_gray_code(x_orig_train)
     elif option == "bin":
       x_orig_train = do_binary(x_orig_train)
+    elif option == "uniform":
+      x_orig_train = do_uniform_code(x_orig_train, [255*(i+1)/9 for i in range(8)])
+    elif option == "thresh":
+      x_orig_train = do_uniform_code(x_orig_train, [127])
+    elif option == "scaled":
+      x_orig_train = x_orig_train.astype(np.float32) / 255
+      x_orig_train = 1 - 2 * x_orig_train
+    else:
+      exit(f"{option} is not a valid option for MNIST")
 
   # flatten
   x_orig_train = x_orig_train.reshape((x_orig_train.shape[0], -1))
@@ -103,6 +113,12 @@ def get_data(dataset):
     data = get_mnist("gray")
   elif dataset == "mnist_bin":
     data = get_mnist("bin")
+  elif dataset == "mnist_uniform":
+    data = get_mnist("uniform")
+  elif dataset == "mnist_thresh":
+    data = get_mnist("thresh")
+  elif dataset == "mnist_scaled":
+    data = get_mnist("scaled")
   else:
     quit("invalid dataset")
 

@@ -98,6 +98,27 @@ def get_fixed_weight_model(input_shape, output_shape, activation, layer_size):
 
   return model
 
+def get_frozen_layer_model(input_shape, output_shape, activation, layer_size):
+  """ 
+    Replicates the functionality of "get_model", except the weights in the first layer (but not the biases) are frozen (meaning they cannot be trained)
+  """
+
+  # cute trick for only freezing the weights
+  # define a new layer without biases and make activation linear
+  # then a layer after it which is just biases and has the activation function
+  # this then behaves exactly like a Dense layer  
+  model = keras.Sequential([
+    keras.layers.Dense(layer_size, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
+    BiasLayer(activation=activation),
+    keras.layers.Dense(output_shape, activation="softmax", trainable=True)
+  ])
+
+  model.compile(optimizer=optimizer,
+                loss='sparse_categorical_crossentropy',
+                metrics=['accuracy'])
+
+  return model
+
 def get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor=None):
   """
   Gets a model that will classify the MNIST dataset
@@ -115,7 +136,7 @@ def get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor=No
     the name of the activation function you wish to use (see get_new_model_helper)
   layer_size: int
     the number of neurons in the hidden layer
-  flavor: "model" (or None) | "logit_model" | "fixed_weight_model"
+  flavor: "model" (or None) | "logit_model" | "fixed_weight_model" | "frozen_layer_model"
     defines which of the three flavors of models to use (see get_new_model_helper)
 
   Returns
@@ -140,7 +161,7 @@ def get_new_model(x_train, activation_name, flavor=None):
     The training input data to be used for this model
   activation_name: string
     the name of the activation function you wish to use (see get_new_model_helper)
-  flavor: "model" (or None) | "logit_model" | "fixed_weight_model"
+  flavor: "model" (or None) | "logit_model" | "fixed_weight_model" | "layer_frozen_model"
     defines which of the three flavors of models to use (see get_new_model_helper)
 
   Returns
@@ -167,7 +188,7 @@ def get_new_model_helper(input_shape, output_shape, activation_name, layer_size,
     the name of the activation function to use
   layer_size: int
     the number of hidden layers
-  flavor: "model" or None | "logit_model" | "fixed_weight_model"
+  flavor: "model" or None | "logit_model" | "fixed_weight_model" | "layer_frozen_model"
     which of the models to return (see code below)
 
   Returns
@@ -190,6 +211,8 @@ def get_new_model_helper(input_shape, output_shape, activation_name, layer_size,
     model = get_logit_model(input_shape, output_shape, activation, layer_size)
   elif flavor == "fixed_weight_model":
     model = get_fixed_weight_model(input_shape, output_shape, activation, layer_size)
+  elif flavor == "frozen_layer_model":
+    model = get_frozen_layer_model(input_shape, output_shape, activation, layer_size)
   else:
     raise ValueError(f"invalid value {flavor} for argument flavor")
 
@@ -235,7 +258,7 @@ def load_model(x_train, file_name, flavor=None):
   file_name: string in format {file name}:{activation function name}
     the part before the colon is the .h5 file that the weights are in
     the part after the colon is the name of the activation function to use
-  flavor: "model" (or None) | "logit_model" | "fixed_weight_model"
+  flavor: "model" (or None) | "logit_model" | "fixed_weight_model" | "frozen_layer_model"
     defines which of the three flavors of models to use (see get_new_model_helper)
 
   Returns
@@ -261,7 +284,7 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):
     the part after the colon is the name of the activation function to use
   layer_size: int
     the number of neurons in the hidden layer
-  flavor: "model" (or None) | "logit_model" | "fixed_weight_model"
+  flavor: "model" (or None) | "logit_model" | "fixed_weight_model" | "frozen_layer_model" 
     defines which of the three flavors of models to use (see get_new_model_helper)
 
   Returns
@@ -274,13 +297,36 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):
   weights_file = file_name[0:colon_index]
   activation_name = file_name[colon_index+1:]
 
-  if y_train is None:
-    model = get_new_model(x_train, activation_name, flavor=flavor)
-  else:
-    model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor)
+  needs_reload = (flavor == "fixed_weight_model" or flavor == "frozen_layer_model")
 
-  model.build(x_train.shape)
-  model.load_weights(weights_file)
+  first_flavor = flavor
+
+  if needs_reload:
+    first_flavor = None
+
+  if y_train is None:
+    first_model = get_new_model(x_train, activation_name, flavor=first_flavor)
+  else:
+    first_model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, first_flavor)
+
+  first_model.build(x_train.shape)
+  first_model.load_weights(weights_file)
+
+  # get the weights out of the first model and into the model of the actual flavor we want
+  # we have to do this because tf won't let us load weights directly into the partially frozen models
+  if needs_reload:
+    weights = first_model.get_weights()
+  
+    if y_train is None:
+      model = get_new_model(x_train, activation_name, flavor=flavor)
+    else:
+      model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor)
+ 
+    model.build(x_train.shape)
+    model.set_weights(weights)
+
+  else:
+    model = first_model
 
   return model, activation_name
 

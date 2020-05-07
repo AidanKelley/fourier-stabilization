@@ -29,7 +29,7 @@ data_shape = x_train.shape[1:]
 
 # load the original model so we can load then extract the weights
 
-if dataset == "mnist":
+if "mnist" in dataset:
   orig_model, activation = load_mnist_model(x_train, y_train, in_file, 1024)
   model = get_new_mnist_model(x_train, y_train, activation, 1024, "fixed_weight_model")
 else:

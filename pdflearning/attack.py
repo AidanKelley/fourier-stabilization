@@ -58,6 +58,7 @@ num_data_points = big_data[0][2].shape[0]
 
 # get the max number fo features as this is the absolute maximal robustness
 max_data_dim = max([data[0].shape[1] for data in big_data])
+print(f"max_data_dim: {max_data_dim}")
 
 # get the models
 for index, in_file in enumerate(in_files):
@@ -87,11 +88,23 @@ else:
   np.random.seed(1)
   test_indices = np.random.choice(num_data_points, size=n_trials, replace=False)
 
+min_norms = [[] for _ in models]
+
+def save_norms():
+  # save the results
+  if out_file is not None:
+    out_obj = {'file_names': in_files, 'min_norms': min_norms}
+    with open(out_file, "w") as out_handle:
+      json.dump(out_obj, out_handle)
+
+    print(f"saved to {out_file}")
+  else:
+    print(f"min_norms = {min_norms}")    
+
+
+
 # the custom version of JSMA that we coded
 if attack == "custom_jsma": 
-
-  # set up the data structure that holds frequencies
-  freqs = [[0 for _ in range(max_data_dim)] for _ in models]
 
   # run the attack for every test example
   for count, test_index in enumerate(test_indices):
@@ -112,30 +125,14 @@ if attack == "custom_jsma":
         x0 = x_test[test_index]
 
         norm, _ = l0_attack(x0, target, model)
-      freqs[index][norm] += 1
+      min_norms.append(norm)
+        
+    save_norms()
 
-    for index, freq in enumerate(freqs):
-      print(f"{names[index]}: {freq}")
-
-    if count % 5 == 0 and out_file is not None:
-      out_obj = {'file_names': in_files, 'freq_data': freqs}
-      with open(out_file, "w") as out_handle:
-        json.dump(out_obj, out_handle)
-
-  # save the results
-  if out_file is not None:
-    out_obj = {'file_names': in_files, 'freq_data': freqs}
-    with open(out_file, "w") as out_handle:
-      json.dump(out_obj, out_handle)
-
-    print(f"saved to {out_file}")
-  else:
-    print(f"all_freqs = {freqs}")
 
 # the Carlini and Wagner attack, provided by foolbox
 elif attack in ["carlini", "brendel"]:
   # data structure to store the (unordered) norms
-  min_norms = [[] for _ in models]
 
   for model_index, model in enumerate(models):
     _, _, x_test, y_test = big_data[model_index]
@@ -184,21 +181,10 @@ elif attack in ["carlini", "brendel"]:
     # Is this messy? Yes. Does it work? Yes.
     min_norms[model_index] = norms.numpy().tolist()
 
-  # save the results
-  if out_file is not None:
-    out_obj = {'file_names': in_files, 'min_norms': min_norms}
-    with open(out_file, "w") as out_handle:
-      json.dump(out_obj, out_handle)
-
-    print(f"saved to {out_file}")
-  else:
-    print(f"min_norms = {freqs}")    
-
 else:
   exit("invalid attack")
 
-
-
+save_norms()
 
 
 
