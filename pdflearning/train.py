@@ -54,8 +54,15 @@ else:
 
   if "mnist" in dataset:
     model, _ = load_mnist_model(x_train, y_train, in_file, 1024, flavor=model_flavor)
+    # freeze_weights option requires a fake model to save the weights
+    if freeze_weights:
+      fake_model = get_new_mnist_model(x_train, y_train, activation, 1024)
   else:
     model, _ = load_model(x_train, in_file, flavor=model_flavor)
+    if freeze_weights:
+      fake_model = get_new_model(x_train, activation)
+
+
 
 # if coarse is 0, interpret as no coarsening
 if coarse == 0:
@@ -66,8 +73,12 @@ for i in range(total_iter):
   model.fit(x_train, y_train, epochs=coarse)
 
   if out_file is not None:
+    if freeze_weights:
+      fake_model.set_weights(model.get_weights())
+      fake_model.save_weights(out_file)
+    else:
+      model.save_weights(out_file)
     print(f"model saved to {out_file}")
-    model.save_weights(out_file)
 
   save_status(status_file, f"{(i+1) * coarse} {model.evaluate(x_test, y_test)}")
 
