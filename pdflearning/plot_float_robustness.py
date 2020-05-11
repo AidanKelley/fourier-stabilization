@@ -4,10 +4,13 @@ parser = ArgumentParser()
 
 parser.add_argument("data_file", action="store")
 parser.add_argument("-o", dest="out_dir", action="store")
+parser.add_argument("-s", dest="smooth", action="store_true")
 
 args = parser.parse_args()
 
 data_file = args.data_file
+out_dir = args.out_dir
+smooth = args.smooth
 
 import json
 
@@ -22,12 +25,10 @@ import matplotlib as mpl
 
 import numpy as np
 
-max_val = max(max(min_norms)) + 1
+max_val = max([max(min_norm) for min_norm in min_norms]) + 1
 
 def make_hist(norms):
   norms.sort(reverse=True)
-
-  print(norms)
 
   x = norms
   y = np.linspace(0, 1, len(norms), endpoint=False).tolist()
@@ -50,33 +51,49 @@ def make_hist(norms):
     else:
       cursor += 1
 
+  do_bumps = not smooth
   # do some processing for accuracy
-  cursor = 0
-  while cursor < len(x):
+  if do_bumps:
+    cursor = 0
+    while cursor < len(x):
 
-    x.insert(cursor+1, x[cursor])
-    y.insert(cursor+1, min(y[min(cursor+1, len(y) - 1)], 1))
+      x.insert(cursor+1, x[cursor])
+      y.insert(cursor+1, min(y[min(cursor+1, len(y) - 1)], 1))
 
-    cursor += 2
+      cursor += 2
 
   # add in a 0 at the end
 
   x.insert(0, max_val)
   y.insert(0, 0)
 
+  # reverse both since we initially did this in reverse order
+  x.reverse()
+  y.reverse()
+
   return x, y
 
+if out_dir is not None:
+  file_names = data["file_names"]
+  for index, norms in enumerate(min_norms):
+    x, y = make_hist(norms)
+    coordinates = "".join([f"{x[i]} {y[i]}\n" for i, _ in enumerate(x)])
+    out_file = out_dir + "/" + names[index] + ".txt"
+    with open(out_file, "w") as file_handle:
+      file_handle.write("x y\n")
+      file_handle.write(coordinates)
 
-for index, norms in enumerate(min_norms):
-  x, y = make_hist(norms)
-  plt.plot(x, y, '-', label=names[index])
+else:
+  for index, norms in enumerate(min_norms):
+    x, y = make_hist(norms)
+    plt.plot(x, y, '-', label=names[index])
 
-plt.legend()
+  plt.legend()
 
-plt.xlabel("$||\\eta||_2 \\leq x$")
-plt.ylabel("accuracy")
+  plt.xlabel("$||\\eta|| \\leq x$")
+  plt.ylabel("accuracy")
 
-plt.show()
+  plt.show()
 
 
 
