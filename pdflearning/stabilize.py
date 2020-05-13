@@ -62,7 +62,7 @@ if code_file is not None:
 
 model.set_weights(weights)
 
-model.evaluate(x_train, y_train, verbose=2)
+model.evaluate(x_test, y_test, verbose=2)
 
 if out_file is not None:
   model.save_weights(out_file)

@@ -125,17 +125,17 @@ if attack == "custom_jsma":
         x0 = x_test[test_index]
 
         norm, _ = l0_attack(x0, target, model)
-      min_norms.append(norm)
+      min_norms[index].append(norm)
         
     save_norms()
 
 
-# the Carlini and Wagner attack, provided by foolbox
-elif attack in ["carlini", "brendel"]:
+# L1 Brendel Bethge Attack
+elif attack == "brendel":
   # data structure to store the (unordered) norms
 
   for model_index, model in enumerate(models):
-    _, _, x_test, y_test = big_data[model_index]
+    x_train, y_train, x_test, y_test = big_data[model_index]
 
     # some data 
     x_rand = x_test[test_indices]
@@ -147,39 +147,24 @@ elif attack in ["carlini", "brendel"]:
     # foolbox setup
     foolbox_model = foolbox.models.TensorFlowModel(model, bounds=(-2, 2))
 
-    if attack == "carlini":
-      # defaults to misclassification (untargeted)
-      carlini_attack = foolbox.attacks.CarliniWagnerL2Attack(foolbox_model)
+    print(f"acc: {foolbox.accuracy(foolbox_model, x_rand, y_rand)}")
 
-      x_adversarial = carlini_attack(x_rand, y_rand,
-                             unpack = True,
-                             binary_search_steps=10,
-                             max_iterations = 100,
-                             confidence = 0,
-                             learning_rate = 0.01,
-                             initial_const = 0.0001,
-                             abort_early = True)
+    init_attack = foolbox.attacks.DatasetAttack()
+    init_attack.feed(foolbox_model, x_train)
 
-      norms = tf.norm(x_rand-x_adversarial, axis=1)
+    brendel_attack = foolbox.attacks.L1BrendelBethgeAttack(init_attack=init_attack)
 
-    elif attack == "brendel":
-      print(f"acc: {foolbox.accuracy(foolbox_model, x_rand, y_rand)}")
+    criterion = foolbox.criteria.Misclassification(y_rand)
 
-      brendel_attack = foolbox.attacks.L1BrendelBethgeAttack()
 
-      x_adversarial, a, b = brendel_attack(foolbox_model, x_rand, y_rand, epsilons=270)
+    epsilons = (np.array([*range(10000)])*0.01).tolist()
+    print(epsilons)
 
-      print(a)
-      print(b)
+    _, _, success = brendel_attack(foolbox_model, x_rand, criterion, epsilons=epsilons)
 
-      norms = tf.norm(x_rand - x_adversarial, ord=1, axis=1)
-
-      print(norms)
-    else:
-      exit(f"\"{attack}\" is not a valid attack name")
-
+    print(success)
     # Is this messy? Yes. Does it work? Yes.
-    min_norms[model_index] = norms.numpy().tolist()
+    # min_norms[model_index] = norms.numpy().tolist()
 
 else:
   exit("invalid attack")

@@ -20,15 +20,15 @@ def do_gray_code(x):
   binary_scaled = 1 - 2 * binary_floats
   return binary_scaled
 
-def do_binary(x):
+def do_binary(x, width=8):
   x = x.astype(np.uint8)
-  x = to_binary(x, 8)
+  x = to_binary(x, width)
   x = x.astype(np.float32)
   return 1 - 2 * x
 
 if __name__ == "__main__":
   # do a little testing
-  x_array = [[i + 5*j for i in range(5)] for j in range(3)]
+  x_array = [[16 * (j + 4*i) for j in range(4)] for i in range(4)]
   x = np.array(x_array)
   print("hey")
   print(x.shape)
@@ -36,3 +36,4 @@ if __name__ == "__main__":
   coded = do_gray_code(x)
   print(coded.shape)
   print(coded)
+  print(do_binary(x/64, 2))

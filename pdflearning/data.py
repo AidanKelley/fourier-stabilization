@@ -63,6 +63,8 @@ def get_mnist(option=None):
       x_orig_train = do_gray_code(x_orig_train)
     elif option == "bin":
       x_orig_train = do_binary(x_orig_train)
+    elif option == "bin2":
+      x_orig_train = do_binary(x_orig_train/64, 2)
     elif option == "uniform":
       x_orig_train = do_uniform_code(x_orig_train, [255*(i+1)/9 for i in range(8)])
     elif option == "thresh":
@@ -113,6 +115,8 @@ def get_data(dataset):
     data = get_mnist("gray")
   elif dataset == "mnist_bin":
     data = get_mnist("bin")
+  elif dataset == "mnist_bin2":
+    data = get_mnist("bin2")
   elif dataset == "mnist_uniform":
     data = get_mnist("uniform")
   elif dataset == "mnist_thresh":

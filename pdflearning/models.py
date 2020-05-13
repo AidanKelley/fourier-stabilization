@@ -292,7 +292,11 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):
   A keras Sequential model
   """
   colon_index = file_name.find(":")
-  assert(colon_index > 0)
+  try:
+    assert(colon_index > 0)
+  except (e):
+    print("You must pass models in the format {file_name.h5}:{activation_name}")
+    raise e
 
   weights_file = file_name[0:colon_index]
   activation_name = file_name[colon_index+1:]

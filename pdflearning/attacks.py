@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-def l0_multiclass_attack(x0, orig_class, num_classes, model):
+def l0_multiclass_attack(x0, orig_class, num_classes, model, change_at_once = 1):
   x = tf.cast(x0, tf.float32)
   
   dim = tf.shape(x0)[0]
@@ -21,9 +21,6 @@ def l0_multiclass_attack(x0, orig_class, num_classes, model):
   other_indices.remove(target)
  
   already_changed = set()
-  change_at_once = 8
-
-  print(f"other_indices: {other_indices}")
 
   count = 0
   while count < 1000:
@@ -33,10 +30,8 @@ def l0_multiclass_attack(x0, orig_class, num_classes, model):
 
     # get the initial prediction
     initial_logits = model.predict(x_2d)[0]
-    print(initial_logits)
 
     max_class = tf.argmax(initial_logits)
-    print(f"max_class: {max_class}, target: {target}, orig_class: {orig_class}")
     if max_class != orig_class:
       break
 
@@ -86,8 +81,6 @@ def l0_multiclass_attack(x0, orig_class, num_classes, model):
         indices_to_flip.append(potential_index)
 
       index_index += 1
-
-    print(indices_to_flip)
 
     # for every index, flip that index in x
     # print(x)
