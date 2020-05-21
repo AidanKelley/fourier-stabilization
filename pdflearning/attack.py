@@ -8,6 +8,8 @@ parser.add_argument("-i", dest='in_files', action="append", help="the model, in 
 parser.add_argument("-n", "--trials", dest='trials', action="store", default=100, help="the number of inputs to run on")
 parser.add_argument("-o", dest='out_file', action="store", help="the output .json file to store data from the run.")
 parser.add_argument("--all", dest="do_all", action="store_true", help="if this flag is supplied, all data points will be used")
+parser.add_argument("-c", dest="batch_size", action="store", help="defines the size of the batch of inputs if the brendel attack is used (custom_jsma always uses batch size 1)", default=0)
+parser.add_argument("-t", dest="test_indices", action="append", help="for debugging, you can run the attack on certain input indices", default=[])
 
 # get args
 args = parser.parse_args()
@@ -17,7 +19,9 @@ in_files = args.in_files
 n_trials = int(args.trials)
 out_file = args.out_file
 do_all = args.do_all
-  
+batch_size = int(args.batch_size)
+test_indices = [int(i) for i in args.test_indices]
+
 # make sure each model has a database
 assert(len(datasets) == len(in_files))
 
@@ -80,13 +84,20 @@ for index, in_file in enumerate(in_files):
 
 # choose the data to test with
 # if needed, just use all the data
-if do_all or n_trials >= num_data_points:
-  test_indices = range(num_data_points)
-# otherwise, take a random sample
-else:
-  # seeded for consistency. TODO: remove this when doing the actual test
-  np.random.seed(1)
-  test_indices = np.random.choice(num_data_points, size=n_trials, replace=False)
+if len(test_indices) == 0:
+  if do_all or n_trials >= num_data_points:
+    test_indices = range(num_data_points)
+  # otherwise, take a random sample
+  else:
+    # seeded for consistency. TODO: remove this when doing the actual test
+    np.random.seed(1)
+    test_indices = np.random.choice(num_data_points, size=n_trials, replace=False)
+
+print(test_indices)
+
+# if batch size is 0, this means we don't want any batches
+if batch_size <= 0:
+  batch_size = len(test_indices)
 
 min_norms = [[] for _ in models]
 
@@ -121,10 +132,11 @@ if attack == "custom_jsma":
         norm, _ = l0_multiclass_attack(x0, current_class, 10, model)
 
       else:
-        target = int(1 - y_test[test_index] + 0.5)
+        current_class = int(y_test[test_index])
         x0 = x_test[test_index]
 
-        norm, _ = l0_attack(x0, target, model)
+        norm, _ = l0_multiclass_attack(x0, current_class, 2, model)
+
       min_norms[index].append(norm)
         
     save_norms()
@@ -137,34 +149,62 @@ elif attack == "brendel":
   for model_index, model in enumerate(models):
     x_train, y_train, x_test, y_test = big_data[model_index]
 
-    # some data 
-    x_rand = x_test[test_indices]
-    y_rand = y_test[test_indices]
-
-    x_rand = tf.convert_to_tensor(x_rand, dtype=tf.float32)
-    y_rand = tf.convert_to_tensor(y_rand, dtype=tf.int32)
 
     # foolbox setup
     foolbox_model = foolbox.models.TensorFlowModel(model, bounds=(-2, 2))
 
-    print(f"acc: {foolbox.accuracy(foolbox_model, x_rand, y_rand)}")
-
-    init_attack = foolbox.attacks.DatasetAttack()
+    init_attack = foolbox.attacks.DatasetAttack(distance=foolbox.distances.LpDistance(1))
     init_attack.feed(foolbox_model, x_train)
 
     brendel_attack = foolbox.attacks.L1BrendelBethgeAttack(init_attack=init_attack)
 
-    criterion = foolbox.criteria.Misclassification(y_rand)
+    epsilons = np.array([*range(100*max_data_dim)])*0.01
+    epsilons_list = epsilons.tolist()
 
+    # figure out how many batches we need (ceiling)
+    num_batches = int((len(test_indices) + batch_size - 1)/batch_size)
+    for batch_index in range(num_batches):
+    
+      # get the batch of indices
+      lower_index = batch_index * batch_size
+      upper_index = min((batch_index + 1) * batch_size, len(test_indices))
+      batch_indices = test_indices[lower_index:upper_index]
 
-    epsilons = (np.array([*range(10000)])*0.01).tolist()
-    print(epsilons)
+      # get the data 
+      x_rand = x_test[batch_indices]
+      y_rand = y_test[batch_indices]
 
-    _, _, success = brendel_attack(foolbox_model, x_rand, criterion, epsilons=epsilons)
+      x_rand = tf.convert_to_tensor(x_rand, dtype=tf.float32)
+      y_rand = tf.convert_to_tensor(y_rand, dtype=tf.int32)
 
-    print(success)
-    # Is this messy? Yes. Does it work? Yes.
-    # min_norms[model_index] = norms.numpy().tolist()
+      criterion = foolbox.criteria.Misclassification(y_rand)
+      advs, _, success = brendel_attack(foolbox_model, x_rand, criterion, epsilons=None)
+
+      diffs = x_rand - advs
+
+      print(diffs)
+      print(tf.norm(diffs, axis=0, ord=1))
+      print(tf.norm(diffs, axis=1, ord=1))
+
+      print(success)
+
+      first_true = tf.math.argmax(tf.cast(success, tf.int8), axis=0)
+      first_true_array = first_true.numpy().tolist()
+     
+      print(first_true)
+
+      # filter out the ones where everything was false
+      success_array = success.numpy().tolist()
+      for index, _ in enumerate(first_true_array):
+        if not success_array[first_true_array[index]][index]:
+          first_true_array[index] = -1
+
+      first_true_epsilons = epsilons[first_true_array]
+
+      print(first_true_epsilons)
+
+      min_norms[model_index] += first_true_epsilons.tolist()
+      save_norms()
 
 else:
   exit("invalid attack")
