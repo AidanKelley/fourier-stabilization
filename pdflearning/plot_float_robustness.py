@@ -2,9 +2,9 @@ from argparse import ArgumentParser
 
 parser = ArgumentParser()
 
-parser.add_argument("data_file", action="store")
-parser.add_argument("-o", dest="out_dir", action="store")
-parser.add_argument("-s", dest="smooth", action="store_true")
+parser.add_argument("data_file", action="store", help="The json file containing the results of a robustness experiment (from attack.py)")
+parser.add_argument("-o", dest="out_dir", action="store", help="The directory in which to save the results of the experiment")
+parser.add_argument("-s", dest="smooth", action="store_true", help="Use this option to generate a graph without the bumps. This will then no longer exactly be the robustness, but will be a lower bound on the graph without this option. It is recommended to not use this option.")
 
 args = parser.parse_args()
 
@@ -12,6 +12,7 @@ data_file = args.data_file
 out_dir = args.out_dir
 smooth = args.smooth
 
+# load the data
 import json
 
 with open(data_file, "r") as data_handle:
@@ -25,8 +26,10 @@ import matplotlib as mpl
 
 import numpy as np
 
+# get the maximum value... this will be added to the end so that the line continues for the whole range
 max_val = max([max(min_norm) for min_norm in min_norms]) + 1
 
+# function to make the histogram given the minimum norm needed to create an adversarial example for each test input
 def make_hist(norms):
   norms.sort(reverse=True)
 
@@ -73,6 +76,8 @@ def make_hist(norms):
 
   return x, y
 
+# if there is an output directory given, save there
+# out files are formatted as a latex pgfplots table
 if out_dir is not None:
   file_names = data["file_names"]
   for index, norms in enumerate(min_norms):
@@ -83,6 +88,7 @@ if out_dir is not None:
       file_handle.write("x y\n")
       file_handle.write(coordinates)
 
+# otherwise, we plot the data
 else:
   for index, norms in enumerate(min_norms):
     x, y = make_hist(norms)
