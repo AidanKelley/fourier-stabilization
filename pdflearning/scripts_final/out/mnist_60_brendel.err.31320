@@ -1,0 +1,47 @@
+2020-05-26 01:47:29.709326: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/ibm/lsfsuite/lsf/10.1/linux2.6-glibc2.3-x86_64/lib:/usr/local/cluster/lib64
+2020-05-26 01:47:29.710581: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /opt/ibm/lsfsuite/lsf/10.1/linux2.6-glibc2.3-x86_64/lib:/usr/local/cluster/lib64
+2020-05-26 01:47:29.710607: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+Traceback (most recent call last):
+  File "attack.py", line 40, in <module>
+    from data import get_data
+  File "/home/research/aidankelley/codnn/pdflearning/data.py", line 3, in <module>
+    import tensorflow as tf
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow/__init__.py", line 101, in <module>
+    from tensorflow_core import *
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/__init__.py", line 40, in <module>
+    from tensorflow.python.tools import module_util as _module_util
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 959, in _find_and_load_unlocked
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow/__init__.py", line 50, in __getattr__
+    module = self._load()
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow/__init__.py", line 44, in _load
+    module = _importlib.import_module(self.__name__)
+  File "/home/research/aidankelley/python/Python-3.7.7/Lib/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/__init__.py", line 95, in <module>
+    from tensorflow.python import keras
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/__init__.py", line 27, in <module>
+    from tensorflow.python.keras import models
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/__init__.py", line 27, in <module>
+    from tensorflow.python.keras import models
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/models.py", line 25, in <module>
+    from tensorflow.python.keras.engine import network
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/engine/network.py", line 43, in <module>
+    from tensorflow.python.keras.engine import input_layer as input_layer_module
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/engine/input_layer.py", line 25, in <module>
+    from tensorflow.python.keras.distribute import distributed_training_utils
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/distribute/distributed_training_utils.py", line 38, in <module>
+    from tensorflow.python.keras import callbacks
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/tensorflow_core/python/keras/callbacks.py", line 57, in <module>
+    import requests
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/requests/__init__.py", line 113, in <module>
+    from . import packages
+  File "/home/research/aidankelley/codnn/pdflearning/env/lib/python3.7/site-packages/requests/packages.py", line 7, in <module>
+    locals()[package] = __import__(package)
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 967, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 677, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 724, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 818, in get_code
+  File "<frozen importlib._bootstrap_external>", line 916, in get_data
+KeyboardInterrupt

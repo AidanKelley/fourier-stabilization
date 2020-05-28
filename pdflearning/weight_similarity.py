@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 # set up the command line arguments
 parser = ArgumentParser()
 parser.add_argument("dataset", action="store", help="the dataset to use")
-parser.add_argument("-i", dest="in_file", action="store", help="if given, we calculatethe similarity for this model")
+parser.add_argument("-i", dest="in_file", action="store", help="if given, we calculate the similarity for this model")
 parser.add_argument("-a", dest="activation", action="store", help="if wanting to train models, this is the activation function to use")
 parser.add_argument("-o", dest="out_file", action="store", help="the (.json) output file where the data will be saved")
 parser.add_argument("-N", dest="sizes", action="append", help="the size of the expectation to use. Multiple can be given by doing \" -N x -N y ... -N z\" ")

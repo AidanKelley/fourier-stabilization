@@ -1,0 +1,2 @@
+model_checkpoint_path: "mnist_sigmoid_60_stable_retrain.h5:custom_sigmoid"
+all_model_checkpoint_paths: "mnist_sigmoid_60_stable_retrain.h5:custom_sigmoid"

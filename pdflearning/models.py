@@ -294,7 +294,7 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):
   colon_index = file_name.find(":")
   try:
     assert(colon_index > 0)
-  except (e):
+  except Exception as e:
     print("You must pass models in the format {file_name.h5}:{activation_name}")
     raise e
 

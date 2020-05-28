@@ -30,7 +30,6 @@ def l0_multiclass_attack(x0, orig_class, num_classes, model, change_at_once = 1)
 
     # get the initial prediction
     initial_logits = model.predict(x_2d)[0]
-
     max_class = tf.argmax(initial_logits)
     if max_class != orig_class:
       break
@@ -87,10 +86,10 @@ def l0_multiclass_attack(x0, orig_class, num_classes, model, change_at_once = 1)
     for index in indices_to_flip:
       x = flip_diag_mat[index, :] * x
     # print(x)
-    
+
     count += 1
 
-  return count * change_at_once, x - x0
+  return 2 * count * change_at_once, x - x0
   
 
 def l0_attack(x0, target, model):

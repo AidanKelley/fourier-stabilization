@@ -12,17 +12,6 @@ def cast_float(x):
 def cast_int(x):
   return x.astype(np.int32)
 
-def get_pdfrate():
-  train_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_train.libsvm", n_features=135, zero_based=True)
-  test_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_test.libsvm", n_features=135, zero_based=True)
-  x_train, y_train = train_data[0].toarray(), train_data[1]
-  x_test, y_test = test_data[0].toarray(), test_data[1]
-
-  x_train = 1 - 2*x_train
-  x_test = 1 - 2*x_test
-
-  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
-
 def create_partition(x_orig_train, y_orig_train, p_train=0.2):
   # inspired by pberkes answer: https://stackoverflow.com/questions/3674409/how-to-split-partition-a-dataset-into-training-and-test-datasets-for-e-g-cros, 
   # seed so we always get the same partition (can be changed later)
@@ -43,21 +32,34 @@ def create_partition(x_orig_train, y_orig_train, p_train=0.2):
 
   return x_train, y_train, x_test, y_test
 
-def get_hidost():
-  train_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_train.libsvm", n_features=961, zero_based=True)
-  # test_data = datasets.load_svmlight_file("data/hidost_test.libsvm", n_features=961, zero_based=True)
+def get_pdfrate(test=False):
+  train_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_train.libsvm", n_features=135, zero_based=True)
   x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
-  # X_test, y_test = test_data[0].toarray(), test_data[1]
 
   x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
 
+  if test:
+    test_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_test.libsvm", n_features=135, zero_based=True)
+    x_test, y_test = test_data[0].toarray(), test_data[1]
+  
+  x_train = 1 - 2*x_train
+  x_test = 1 - 2*x_test
+  
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
-def get_mnist(option=None):
-  (x_orig_train, y_orig_train), (_, _) = tf.keras.datasets.mnist.load_data()
-  # create a random partition to be used for testing -- don't touch the actual test data
-  # make it consistent
+def get_hidost(test=False):
+  train_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_train.libsvm", n_features=961, zero_based=True)
+  x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
 
+  x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
+ 
+  if test:
+   test_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_test.libsvm", n_features=961, zero_based=True)
+   x_test, y_test = test_data[0].toarray(), test_data[1]
+
+  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
+
+def mnist_do_option(x_orig_train, option):
   if option is not None:
     if option == "gray":
       x_orig_train = do_gray_code(x_orig_train)
@@ -75,13 +77,29 @@ def get_mnist(option=None):
     else:
       exit(f"{option} is not a valid option for MNIST")
 
-  # flatten
-  x_orig_train = x_orig_train.reshape((x_orig_train.shape[0], -1))
+  return x_orig_train
 
+def get_mnist(option=None, test=False):
+  (x_orig_train, y_orig_train), (x_orig_test, y_orig_test) = tf.keras.datasets.mnist.load_data()
+  # create a random partition to be used for testing -- don't touch the actual test data
+  # make it consistent
+
+
+  # flatten
+  x_orig_train = mnist_do_option(x_orig_train, option)
+  x_orig_train = x_orig_train.reshape((x_orig_train.shape[0], -1))
+  
   x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train, p_train=1.0/6.0)
 
   print(x_train.shape)
   print(y_train.shape)
+
+  if test:
+    x_orig_test = mnist_do_option(x_orig_test, option)
+    x_orig_test = x_orig_test.reshape((x_orig_test.shape[0], -1))
+
+    x_test = x_orig_test
+    y_test = y_orig_test
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
@@ -94,6 +112,14 @@ def get_coded(original, code_file):
 
 
 def get_data(dataset):
+  test_index = dataset.find("TEST_")
+  test = False
+  if test_index >= 0:
+    dataset = dataset[len("TEST_"):]
+    test = True
+
+    print(f"Getting the testing dataset of {dataset} instead of the validation dataset")
+
   colon_index = dataset.find(":")
   code_file = None
 
@@ -106,27 +132,34 @@ def get_data(dataset):
   print(f"dataset: {dataset} codes: {code_file}")
 
   if dataset == "pdfrate":
-    data = get_pdfrate()
+    data = get_pdfrate(test)
   elif dataset == "hidost":
-    data = get_hidost()
+    exit("there is an error if you are using raw hidost")
+    # data = get_hidost(test)
+  elif dataset == "hidost_scaled":
+    x_train, y_train, x_test, y_test = get_hidost(test)
+    data = (1 - 2 * x_train, y_train, 1 - 2 * x_test, y_test)
   elif dataset == "mnist":
-    data = get_mnist()
+    data = get_mnist(None, test)
   elif dataset == "mnist_gray":
-    data = get_mnist("gray")
+    data = get_mnist("gray", test)
   elif dataset == "mnist_bin":
-    data = get_mnist("bin")
+    data = get_mnist("bin", test)
   elif dataset == "mnist_bin2":
-    data = get_mnist("bin2")
+    data = get_mnist("bin2", test)
   elif dataset == "mnist_uniform":
-    data = get_mnist("uniform")
+    data = get_mnist("uniform", test)
   elif dataset == "mnist_thresh":
-    data = get_mnist("thresh")
+    data = get_mnist("thresh", test)
   elif dataset == "mnist_scaled":
-    data = get_mnist("scaled")
+    data = get_mnist("scaled", test)
   else:
     quit("invalid dataset")
 
   if code_file is not None and len(code_file) > 0:
     data = get_coded(data, code_file)
+
+  print(data[0].shape)
+  print(data[2].shape)
 
   return data
