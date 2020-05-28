@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 # set up the command line arguments
 parser = ArgumentParser()
 parser.add_argument("dataset", action="store", help="the dataset to use")
-parser.add_argument("-i", dest="in_file", action="store", help="if given, we calculatethe similarity for this model")
+parser.add_argument("-i", dest="in_file", action="store", help="if given, we calculate the similarity for this model")
 parser.add_argument("-a", dest="activation", action="store", help="if wanting to train models, this is the activation function to use")
 parser.add_argument("-o", dest="out_file", action="store", help="the (.json) output file where the data will be saved")
 parser.add_argument("-N", dest="sizes", action="append", help="the size of the expectation to use. Multiple can be given by doing \" -N x -N y ... -N z\" ")
@@ -19,14 +19,14 @@ out_file = args.out_file
 sizes = [int(size) for size in args.sizes]
 n_models = int(args.n_models)
 
-from data import get_data
+from src.data import get_data
 
 # get the data (training only)
 x_train, y_train, _, _ = get_data(dataset)
 
 import tensorflow as tf
-from models import load_mnist_model, get_new_mnist_model, get_new_model
-from stabilization import stabilize_lp
+from src.models import load_mnist_model, get_new_mnist_model, get_new_model
+from src.stabilization import stabilize_lp
 import json
 import psutil
 

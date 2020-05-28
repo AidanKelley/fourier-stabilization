@@ -37,7 +37,7 @@ else:
   for dataset in datasets:
     assert("mnist" not in dataset)
 
-from data import get_data
+from src.data import get_data
 # get all the data
 big_data = [get_data(dataset) for dataset in datasets]
 
@@ -46,8 +46,8 @@ import numpy as np
 import foolbox
 import json
 import eagerpy as ep
-from models import load_model, load_mnist_model
-from attacks import l0_attack, l0_multiclass_attack
+from src.models import load_model, load_mnist_model
+from src.attacks import l0_attack, l0_multiclass_attack
 
 # pad infile names for prettiness
 lens = [len(name) for name in in_files]
@@ -153,7 +153,7 @@ elif attack == "brendel":
     # foolbox setup
     foolbox_model = foolbox.models.TensorFlowModel(model, bounds=(-2, 2))
 
-    init_attack = foolbox.attacks.DatasetAttack(distance=foolbox.distances.LpDistance(1))
+    init_attack = foolbox.attacks.DatasetMinimizationAttack(distance=foolbox.distances.LpDistance(1))
     init_attack.feed(foolbox_model, x_train)
 
     brendel_attack = foolbox.attacks.L1BrendelBethgeAttack(init_attack=init_attack)
@@ -182,28 +182,9 @@ elif attack == "brendel":
 
       diffs = x_rand - advs
 
-      print(diffs)
-      print(tf.norm(diffs, axis=0, ord=1))
-      print(tf.norm(diffs, axis=1, ord=1))
-
-      print(success)
-
-      first_true = tf.math.argmax(tf.cast(success, tf.int8), axis=0)
-      first_true_array = first_true.numpy().tolist()
-     
-      print(first_true)
-
-      # filter out the ones where everything was false
-      success_array = success.numpy().tolist()
-      for index, _ in enumerate(first_true_array):
-        if not success_array[first_true_array[index]][index]:
-          first_true_array[index] = -1
-
-      first_true_epsilons = epsilons[first_true_array]
-
-      print(first_true_epsilons)
-
-      min_norms[model_index] += first_true_epsilons.tolist()
+      norms = tf.norm(diffs, axis=1, ord=1)
+      
+      min_norms[model_index] += norms.numpy().tolist()
       save_norms()
 
 else:
