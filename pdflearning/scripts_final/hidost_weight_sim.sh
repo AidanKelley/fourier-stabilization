@@ -6,5 +6,5 @@
 #BSUB -J hidost_similarity_job
 
 cd ~/codnn/pdflearning
-pipenv run python weight_similarity.py hidost -a custom_sigmoid -o similarity/hidost_train_64_1248x100k.json -n 64 -N 100000 -N 200000 -N 400000 -N 800000
+pipenv run python weight_similarity.py hidost -a custom_sigmoid -o similarity_out_final/hidost_similarity.json -n 64 -N 100000 -N 200000 -N 400000 -N 800000
 

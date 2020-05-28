@@ -37,7 +37,7 @@ else:
   for dataset in datasets:
     assert("mnist" not in dataset)
 
-from data import get_data
+from src.data import get_data
 # get all the data
 big_data = [get_data(dataset) for dataset in datasets]
 
@@ -46,8 +46,8 @@ import numpy as np
 import foolbox
 import json
 import eagerpy as ep
-from models import load_model, load_mnist_model
-from attacks import l0_attack, l0_multiclass_attack
+from src.models import load_model, load_mnist_model
+from src.attacks import l0_attack, l0_multiclass_attack
 
 # pad infile names for prettiness
 lens = [len(name) for name in in_files]

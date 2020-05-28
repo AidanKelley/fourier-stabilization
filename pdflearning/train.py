@@ -32,8 +32,8 @@ import matplotlib.pyplot as plt
 
 from data import get_data
 
-from models import get_new_model, get_new_mnist_model, load_model, load_mnist_model
-from status import save_status
+from src.models import get_new_model, get_new_mnist_model, load_model, load_mnist_model
+from src.status import save_status
 
 # put headers on status_file
 save_status(status_file, "epoch loss accuracy")

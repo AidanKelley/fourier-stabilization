@@ -25,10 +25,10 @@ x_train, y_train, x_test, y_test = get_data(dataset)
 import tensorflow as tf
 from tensorflow import keras
 
-from models import load_model, load_mnist_model, sign
-from stabilization import stabilize_l1, stabilize_lp
+from src.models import load_model, load_mnist_model, sign
+from src.stabilization import stabilize_l1, stabilize_lp
 
-from coding import load_codes
+from src.coding import load_codes
 
 if "mnist" in dataset:
   model, _ = load_mnist_model(x_train, y_train, in_file, 1024)

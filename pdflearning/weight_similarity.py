@@ -19,14 +19,14 @@ out_file = args.out_file
 sizes = [int(size) for size in args.sizes]
 n_models = int(args.n_models)
 
-from data import get_data
+from src.data import get_data
 
 # get the data (training only)
 x_train, y_train, _, _ = get_data(dataset)
 
 import tensorflow as tf
-from models import load_mnist_model, get_new_mnist_model, get_new_model
-from stabilization import stabilize_lp
+from src.models import load_mnist_model, get_new_mnist_model, get_new_model
+from src.stabilization import stabilize_lp
 import json
 import psutil
 

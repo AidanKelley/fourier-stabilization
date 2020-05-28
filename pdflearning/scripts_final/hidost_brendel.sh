@@ -11,4 +11,4 @@ source env/bin/activate
 python attack.py brendel \
   -d TEST_hidost_scaled -i models_final_real/hidost_sigmoid.h5:custom_sigmoid \
   -d TEST_hidost_scaled -i models_final_real/hidost_sigmoid_stable_bias.h5:custom_sigmoid \
-  --all -c 100 -o attack_data_final_real/hidost_scaled.json
+  --all -c 100 -o attack_data_final_real/hidost_brendel.json
