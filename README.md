@@ -7,7 +7,8 @@ any other machine, and in fact tensorflow is known to fail on some architectures
 is most likely why").
 
 # Environment Setup
-We used Python 3.7.7 and pip 19.2.3. Any version of python above 3.6 _should_ work, but has not been tested.
+We used Python 3.7.7 and pip 19.2.3. Any version of python above 3.6 _should_ work, but has not been tested. You may need to install these, and
+additionally, `venv`, but instructions for that are out of scope.
 To setup the virtual env run
 
 `python -m venv env`
