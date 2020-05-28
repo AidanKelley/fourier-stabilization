@@ -79,7 +79,8 @@ for index, in_file in enumerate(in_files):
     model, _ = load_mnist_model(x_train, y_train, in_file, 1024, flavor="logit_model")
   else:
     model, _ = load_model(x_train, in_file, flavor="logit_model")
-  
+ 
+  print("done loading a model")
   models.append(model)
 
 # choose the data to test with

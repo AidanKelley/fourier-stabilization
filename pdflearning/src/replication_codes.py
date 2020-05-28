@@ -1,4 +1,4 @@
-from coding import save_codes
+from .coding import save_codes
 
 from argparse import ArgumentParser
 

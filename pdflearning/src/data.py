@@ -1,10 +1,11 @@
 from sklearn import datasets
 import numpy as np
+
 import tensorflow as tf
 
-from coding import load_codes, code_inputs
-from gray_codes import do_gray_code, do_binary
-from uniform_coding import do_uniform_code
+from .coding import load_codes, code_inputs
+from .gray_codes import do_gray_code, do_binary
+from .uniform_coding import do_uniform_code
 
 def cast_float(x):
   return x.astype(np.float32)
@@ -33,13 +34,13 @@ def create_partition(x_orig_train, y_orig_train, p_train=0.2):
   return x_train, y_train, x_test, y_test
 
 def get_pdfrate(test=False):
-  train_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_train.libsvm", n_features=135, zero_based=True)
+  train_data = datasets.load_svmlight_file("pdf_dataset/data/pdfrateB_train.libsvm", n_features=135, zero_based=True)
   x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
 
   x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
 
   if test:
-    test_data = datasets.load_svmlight_file("../pdf_dataset/data/pdfrateB_test.libsvm", n_features=135, zero_based=True)
+    test_data = datasets.load_svmlight_file("pdf_dataset/data/pdfrateB_test.libsvm", n_features=135, zero_based=True)
     x_test, y_test = test_data[0].toarray(), test_data[1]
   
   x_train = 1 - 2*x_train
@@ -48,13 +49,13 @@ def get_pdfrate(test=False):
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
 
 def get_hidost(test=False):
-  train_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_train.libsvm", n_features=961, zero_based=True)
+  train_data = datasets.load_svmlight_file("pdf_dataset/data/hidost_train.libsvm", n_features=961, zero_based=True)
   x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
 
   x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
  
   if test:
-   test_data = datasets.load_svmlight_file("../pdf_dataset/data/hidost_test.libsvm", n_features=961, zero_based=True)
+   test_data = datasets.load_svmlight_file("pdf_dataset/data/hidost_test.libsvm", n_features=961, zero_based=True)
    x_test, y_test = test_data[0].toarray(), test_data[1]
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)

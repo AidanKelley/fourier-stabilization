@@ -1,9 +1,9 @@
 import tensorflow as tf
 from tensorflow import keras
 
-from FixedWeight import FixedWeight
+from .FixedWeight import FixedWeight
 
-from BiasLayer import BiasLayer
+from .BiasLayer import BiasLayer
 
 import numpy as np
 

@@ -21,10 +21,10 @@ from tensorflow import keras
 import numpy as np
 import matplotlib.pyplot as plt
 
-from data import get_data
+from .data import get_data
 
-from models import get_model, sign
-from stabilization import stabilize_lp
+from .models import get_model, sign
+from .stabilization import stabilize_lp
 import json
 
 x_train, y_train, x_test, y_test = get_data(dataset)

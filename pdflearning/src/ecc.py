@@ -14,7 +14,7 @@ in_file = args.in_file
 out_model_file = args.out_model_file
 out_codes_file = args.out_codes_file
 
-from data import get_data
+from .data import get_data
 
 x_train, y_train, x_test, y_test = get_data(dataset)
 
@@ -23,12 +23,12 @@ x_train, y_train, x_test, y_test = get_data(dataset)
 import tensorflow as tf
 from tensorflow import keras
 
-from models import get_model
+from .models import get_model
 
 import numpy as np
 import tensorflow_probability as tfp
 
-from coding import save_codes, all_combinations
+from .coding import save_codes, all_combinations
 
 import heapq
 
