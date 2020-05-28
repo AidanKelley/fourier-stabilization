@@ -5,7 +5,7 @@
 #BSUB -R "rusage[mem=10]"
 #BSUB -J mnist_60_brendel_coarse
 
-cd ~/codnn/pdflearning
+cd ~/codnn
 source env/bin/activate
 
 python attack.py brendel --all -c 100 \
