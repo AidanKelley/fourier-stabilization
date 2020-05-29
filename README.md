@@ -106,7 +106,7 @@ In order to display the data in `pgfplots` in LaTeX, we'll need to create an out
 
 then run
 
-`python plot_float_robustness attack_data_final_real/pdfrate_jsma.json -o attack_data_final_real/pdfrate_jsma/models_final_real`
+`python plot_float_robustness.py attack_data_final_real/pdfrate_jsma.json -o attack_data_final_real/pdfrate_jsma`
 
 This will generate text files that are `pgfplots` tables. You can then import them as tables into `pgfplots` to plot them in LaTeX.
 
@@ -118,9 +118,13 @@ To run the weight similarity experiment on hidost, first we make a directory to 
 
 then, do
 
-`python weight_similarity.py hidost -a custom_sigmoid -o similarity_out_final/hidost_similarity.json -n 64 -N 100000 -N 200000 -N 400000 -N 800000`
+`python weight_similarity.py hidost_scaled -a custom_sigmoid -o similarity_out_final/hidost_similarity.json -n 64 -N 100000 -N 200000 -N 400000 -N 800000`
 
 This says to run weight similarity on models trained on `hidost` using the `scaled_sigmoid` activation. It saves the results in `json` format to `similarity_out_final/hidost_similarity.json`. It says to train 64 models and use all of them for the experiment. It also says to use summation sizes of 100000, 200000, 400000, and 800000 to approximate the expectation.
+
+When we run the expirement on MNIST, we use only a single file, so we can instead just supply the input file instead of giving a number of models that should be trained. The syntax for this is
+
+`python weight_similarity.py mnist_thresh -i path/to/mnist/model.h5:custom_sigmoid -o similarity_out_final/mnist_similarity.json -N 100000 -N 200000 -N 400000 -N 800000`
 
 # Viewing the output of the weight similarity experiment
 
@@ -135,7 +139,7 @@ Then, to save the files into tables for use in LaTeX `pgfplots`, do
 
 `mkdir similarity_out/hidost_similarity`
 
-`python plot_similarity --multi-in similarity_out_final/hidost_similarity.json -o similarity_out_final/hidost_similarity`
+`python plot_similarity.py --multi-in similarity_out_final/hidost_similarity.json -o similarity_out_final/hidost_similarity`
 
 
 
