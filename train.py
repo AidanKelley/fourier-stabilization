@@ -30,7 +30,7 @@ from tensorflow import keras
 import numpy as np
 import matplotlib.pyplot as plt
 
-from data import get_data
+from src.data import get_data
 
 from src.models import get_new_model, get_new_mnist_model, load_model, load_mnist_model
 from src.status import save_status

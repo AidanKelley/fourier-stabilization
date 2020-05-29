@@ -38,7 +38,7 @@ also recorded in the status file. Once you find the number, make a directory whe
 
 `mkdir models_final_real`
 
-`mv pdfrate_sigmoid_model/{e}_epochs.h5 models_final_real/pdfrate_sigmoid.h5`
+`mv pdfrate_sigmoid/{e}_epochs.h5 models_final_real/pdfrate_sigmoid.h5`
 
 where `{e}` is the number of epochs that gave the best validation accuracy.
 

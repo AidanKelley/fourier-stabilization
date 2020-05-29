@@ -16,7 +16,7 @@ in_file = args.in_file
 out_file = args.out_file
 code_file = args.codes
 
-from data import get_data
+from src.data import get_data
 
 x_train, y_train, x_test, y_test = get_data(dataset)
 
