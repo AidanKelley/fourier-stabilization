@@ -102,7 +102,7 @@ This will display a graph with matplotlib. Note that in order to stop the script
 
 In order to display the data in `pgfplots` in LaTeX, we'll need to create an output directory to store a table file for each model. Run
 
-`mkdir attack_data_final_real/pdfrate_jsma; mkdir attack_data_final_real/pdfrate_jsma/models_final_real`
+`mkdir attack_data_final_real/pdfrate_jsma`
 
 then run
 

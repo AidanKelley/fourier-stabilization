@@ -25,6 +25,7 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 
 import numpy as np
+import os
 
 # get the maximum value... this will be added to the end so that the line continues for the whole range
 max_val = max([max(min_norm) for min_norm in min_norms]) + 1
@@ -84,6 +85,7 @@ if out_dir is not None:
     x, y = make_hist(norms)
     coordinates = "".join([f"{x[i]} {y[i]}\n" for i, _ in enumerate(x)])
     out_file = out_dir + "/" + names[index] + ".txt"
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(out_file, "w") as file_handle:
       file_handle.write("x y\n")
       file_handle.write(coordinates)

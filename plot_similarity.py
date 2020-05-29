@@ -43,6 +43,7 @@ else:
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
+import os
 
 # get consistent bins
 all_data_together = np.hstack(data)
@@ -68,6 +69,7 @@ else:
  for index, series in enumerate(data):
    series_string = "\n".join([str(num) for num in series])
    out_file = out_dir + "/" + labels[index] + ".txt"
+   os.makedirs(os.path.dirname(out_file), exist_ok=True)
    with open(out_file, "w+") as file_handle:
      file_handle.write("x\n")
      file_handle.write(series_string)
