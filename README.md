@@ -78,7 +78,9 @@ You'll want to create a directory for the attack data, so run
 Then, we'll use the `attack.py` script to run attacks to compare the two models you've just trained, run
 
 `python attack.py custom_jsma -d TEST_pdfrate -i models_final_real/pdfrate_sigmoid.h5:scaled_sigmoid \
+     
      -d TEST_pdfrate -i models_final_real/pdfrate_sigmoid_stable_bias.h5:scaled_sigmoid
+     
      --all -o attack_data_final_real/pdfrate_jsma.json` 
 
 The first argument specifies the attack we will use, the `custom_jsma` attack. Then, we pass in a dataset and model pair. Note that you must supply
