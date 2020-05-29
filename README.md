@@ -7,7 +7,7 @@ any other machine, and in fact tensorflow is known to fail on some architectures
 is most likely why").
 
 # Environment Setup
-We used Python 3.7.7 and pip 19.2.3. Any version of python above 3.6 _should_ work, but has not been tested. You may need to install these, and
+We used Python 3.7.7, 64-bit, and pip 19.2.3, running on a Linux system. Any version of python above 3.6 _should_ work, but has not been tested. You may need to install these, and
 additionally, `venv`, but instructions for that are out of scope.
 To setup the virtual env run
 
@@ -17,7 +17,7 @@ Creating the env might take some time. Then, run
 
 `source env/bin/activate`
 
-to activate the virtual environment. Then, you'll want to install the requirements using
+to activate the virtual environment. **Note:**, setting up a `venv` will work differently on a Windows machine. Then, you'll want to install the requirements using
 
 `pip install -r requirements.txt`
 
