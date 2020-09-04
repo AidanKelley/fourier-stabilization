@@ -75,6 +75,11 @@ def mnist_do_option(x_orig_train, option):
     elif option == "scaled":
       x_orig_train = x_orig_train.astype(np.float32) / 255
       x_orig_train = 1 - 2 * x_orig_train
+    elif option == "masked":
+      x_orig_train = mnist_do_option(x_orig_train, "thresh")
+      # For Netanel: Implement this
+      # generate a key (could be entirely random)
+      # apply the key (xor to x_orig_train, make sure that's the variable being modified)
     else:
       exit(f"{option} is not a valid option for MNIST")
 
@@ -89,6 +94,8 @@ def get_mnist(option=None, test=False):
   # flatten
   x_orig_train = mnist_do_option(x_orig_train, option)
   x_orig_train = x_orig_train.reshape((x_orig_train.shape[0], -1))
+
+  # For Netanel: the code to display is x.reshape((28, 28)) to go from 784 to 28 by 28
   
   x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train, p_train=1.0/6.0)
 
@@ -154,6 +161,8 @@ def get_data(dataset):
     data = get_mnist("thresh", test)
   elif dataset == "mnist_scaled":
     data = get_mnist("scaled", test)
+  elif dataset == "mnist_masked":
+    data = get_mnist("masked", test)
   else:
     quit("invalid dataset")
 
