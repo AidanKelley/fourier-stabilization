@@ -218,6 +218,8 @@ def get_new_model_helper(input_shape, output_shape, activation_name, layer_size,
 
   return model
 
+def get_new_linear_model(x_train, activation, flavor):
+  pass
 
 def load_mnist_model(x_train, y_train, file_name, layer_size, flavor=None): 
   """
@@ -267,7 +269,10 @@ def load_model(x_train, file_name, flavor=None):
   """
   return load_model_helper(x_train, None, file_name, 16, flavor)
 
-def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None): 
+def load_general_model(x_train, y_train, file_name, layer_size, flavor=None, model_type=None):
+  return load_model_helper(x_train, y_train, file_name, layer_size, flavor, model_type)
+
+def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, model_type=None):
   """
   Loads model from a file
 
@@ -308,10 +313,19 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):
   if needs_reload:
     first_flavor = None
 
-  if y_train is None:
+  if model_type == None:
+    # this is here for backwards compatibility from when you did not need to specify the model_type
+    if y_train is None:
+      model_type = "mnist"
+    else:
+      model_type = "pdf"
+
+  if model_type == "mnist":
     first_model = get_new_model(x_train, activation_name, flavor=first_flavor)
-  else:
+  elif model_type == "pdf" or model_type == "pdfrate" or model_type == "hidost":
     first_model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, first_flavor)
+  elif model_type == "linear":
+    first_model = get_new_linear_model(x_train, activation_name, first_flavor)
 
   first_model.build(x_train.shape)
   first_model.load_weights(weights_file)
@@ -321,10 +335,12 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None):
   if needs_reload:
     weights = first_model.get_weights()
   
-    if y_train is None:
+    if model_type == "mnist":
       model = get_new_model(x_train, activation_name, flavor=flavor)
-    else:
+    elif model_type == "pdf":
       model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor)
+    elif model_type == "linear":
+      model = get_new_linear_model(x_train, activation_name, flavor)
  
     model.build(x_train.shape)
     model.set_weights(weights)

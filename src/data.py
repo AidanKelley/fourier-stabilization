@@ -120,6 +120,7 @@ def get_coded(original, code_file):
 
 
 def get_data(dataset):
+  # see if we are doing the test set or not
   test_index = dataset.find("TEST_")
   test = False
   if test_index >= 0:
@@ -128,16 +129,22 @@ def get_data(dataset):
 
     print(f"Getting the testing dataset of {dataset} instead of the validation dataset")
 
+  # see if we are doing codes or not
   colon_index = dataset.find(":")
   code_file = None
-
-  print(dataset)
 
   if colon_index >= 0:
     code_file = dataset[colon_index + 1 : ]
     dataset = dataset[0:colon_index]
 
   print(f"dataset: {dataset} codes: {code_file}")
+
+  # see if we should do a restriction or not
+  pipe_index = dataset.find("|")
+  if pipe_index >= 0:
+    restriction_str = dataset[pipe_index + 1:]
+    restrictions = [int(digit) for digit in restriction_str.split(",")]
+    dataset = dataset[0:pipe_index]
 
   if dataset == "pdfrate":
     data = get_pdfrate(test)
@@ -165,6 +172,8 @@ def get_data(dataset):
     data = get_mnist("masked", test)
   else:
     quit("invalid dataset")
+
+  # TODO: perform the restriction
 
   if code_file is not None and len(code_file) > 0:
     data = get_coded(data, code_file)
