@@ -7,6 +7,7 @@ parser.add_argument("dataset", action="store")
 parser.add_argument("in_file", action="store")
 parser.add_argument("-c", dest="codes", action="store")
 parser.add_argument("-o", dest="out_file", action="store")
+parser.add_argument("-m", dest="model_type", action="store")
 
 args = parser.parse_args()
 
@@ -15,6 +16,7 @@ dataset = args.dataset
 in_file = args.in_file
 out_file = args.out_file
 code_file = args.codes
+model_type = args.model_type
 
 from src.data import get_data
 
@@ -25,15 +27,18 @@ x_train, y_train, x_test, y_test = get_data(dataset)
 import tensorflow as tf
 from tensorflow import keras
 
-from src.models import load_model, load_mnist_model, sign
+from src.models import load_model, load_mnist_model, sign, load_general_model
 from src.stabilization import stabilize_l1, stabilize_lp
 
 from src.coding import load_codes
 
-if "mnist" in dataset:
-  model, _ = load_mnist_model(x_train, y_train, in_file, 1024)
-else:
-  model, _ = load_model(x_train, in_file)
+# if "mnist" in dataset:
+#   model, _ = load_mnist_model(x_train, y_train, in_file, 1024)
+# else:
+#   model, _ = load_model(x_train, in_file)
+
+model, fake_model = load_general_model(x_train, y_train, in_file, 1024, None, model_type)
+
 
 model.evaluate(x_test, y_test, verbose=2)
 layer = keras.models.Model(inputs = model.layers[0].input, outputs = model.layers[0].output)

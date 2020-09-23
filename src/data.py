@@ -118,6 +118,27 @@ def get_coded(original, code_file):
 
   return new_x_train, original[1], new_x_test, original[3]
 
+def perform_restriction(data, restriction):
+  x_train, y_train, x_test, y_test = data
+
+  inverse_restriction_map = {digit: index for index, digit in enumerate(restriction)}
+
+  def map_func(x):
+    if x in inverse_restriction_map:
+      return inverse_restriction_map[x]
+    else:
+      return - 1
+
+  f = np.vectorize(map_func)
+
+
+  train_conditions = f(y_train)
+  train_indices = np.nonzero(train_conditions + 1)[0]
+
+  test_conditions = f(y_test)
+  test_indices = np.nonzero(test_conditions + 1)[0]
+
+  return x_train[train_indices], train_conditions[train_indices], x_test[test_indices], test_conditions[test_indices]
 
 def get_data(dataset):
   # see if we are doing the test set or not
@@ -140,10 +161,10 @@ def get_data(dataset):
   print(f"dataset: {dataset} codes: {code_file}")
 
   # see if we should do a restriction or not
-  pipe_index = dataset.find("|")
+  pipe_index = dataset.find(",")
   if pipe_index >= 0:
     restriction_str = dataset[pipe_index + 1:]
-    restrictions = [int(digit) for digit in restriction_str.split(",")]
+    restriction = [int(digit) for digit in restriction_str.split(",")]
     dataset = dataset[0:pipe_index]
 
   if dataset == "pdfrate":
@@ -174,6 +195,8 @@ def get_data(dataset):
     quit("invalid dataset")
 
   # TODO: perform the restriction
+  # we want only the subset of the data that has y \in restrictions
+  data = perform_restriction(data, restriction)
 
   if code_file is not None and len(code_file) > 0:
     data = get_coded(data, code_file)

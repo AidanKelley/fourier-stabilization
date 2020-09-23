@@ -5,6 +5,7 @@ parser = ArgumentParser()
 parser.add_argument("attack", action="store", help="the name of the attack to use")
 parser.add_argument("-d", dest='datasets', action="append", help="the name of each dataset to be used. Multiple are used, but all must have the same number of datapoints. All models are only tested against inputs from their datasets, but if multiple models are given, all are tested on the same indices accross all datasets. Multiple datasets are allowed because we might wanted to apply some transformation to the data before some of the models classify it")
 parser.add_argument("-i", dest='in_files', action="append", help="the model, in the format {model_file}.h5:{activation function name}")
+parser.add_argument("-m", dest='model_types', action="append")
 parser.add_argument("-n", "--trials", dest='trials', action="store", default=100, help="the number of inputs to run on")
 parser.add_argument("-o", dest='out_file', action="store", help="the output .json file to store data from the run.")
 parser.add_argument("--all", dest="do_all", action="store_true", help="if this flag is supplied, all data points will be used")
@@ -16,6 +17,7 @@ args = parser.parse_args()
 attack = args.attack
 datasets = args.datasets
 in_files = args.in_files
+model_types = args.model_types
 n_trials = int(args.trials)
 out_file = args.out_file
 do_all = args.do_all
@@ -24,18 +26,8 @@ test_indices = [int(i) for i in args.test_indices]
 
 # make sure each model has a database
 assert(len(datasets) == len(in_files))
+assert(len(model_types) == len(in_files))
 
-# see if we are using MNIST or not
-using_mnist = False
-if "mnist" in datasets[0]:
-  using_mnist = True
-  # sanity check
-  for dataset in datasets:
-    assert("mnist" in dataset)
-else:
-  # sanity check
-  for dataset in datasets:
-    assert("mnist" not in dataset)
 
 from src.data import get_data
 # get all the data
@@ -46,7 +38,7 @@ import numpy as np
 import foolbox
 import json
 import eagerpy as ep
-from src.models import load_model, load_mnist_model
+from src.models import load_model, load_mnist_model, load_general_model
 from src.attacks import l0_attack, l0_multiclass_attack
 
 # pad infile names for prettiness
@@ -74,11 +66,9 @@ for index, in_file in enumerate(in_files):
 
   # load in the model
   x_train = big_data[index][0]
-  if using_mnist:
-    y_train = big_data[index][1]
-    model, _ = load_mnist_model(x_train, y_train, in_file, 1024, flavor="logit_model")
-  else:
-    model, _ = load_model(x_train, in_file, flavor="logit_model")
+  y_train = big_data[index][1]
+
+  model, _ = load_general_model(x_train, y_train, in_file, 1024, "logit_model", model_types[index], None)
  
   print("done loading a model")
   models.append(model)
@@ -125,20 +115,12 @@ if attack == "custom_jsma":
     for index, model in enumerate(models):
 
       _, _, x_test, y_test = big_data[index]
-      
-      if using_mnist:
-        current_class = int(y_test[test_index])
-        x0 = x_test[test_index]
+      current_class = int(y_test[test_index])
+      x0 = x_test[test_index]
 
-        norm, _ = l0_multiclass_attack(x0, current_class, 10, model)
-
-      else:
-        current_class = int(y_test[test_index])
-        x0 = x_test[test_index]
-
-        norm, _ = l0_multiclass_attack(x0, current_class, 2, model)
-
+      norm, _ = l0_multiclass_attack(x0, current_class, np.amax(y_test) + 1, model, change_at_once=8)
       min_norms[index].append(norm)
+      print(min_norms)
         
     save_norms()
 

@@ -11,6 +11,7 @@ parser.add_argument("-c", dest="checkpoints", action="store", default="5", help=
 parser.add_argument("-s", dest="status_file", action="store", help="If selected, a status file will be updated every {c} epochs so you can monitor the process as it runs")
 parser.add_argument("-b", dest="do_biases", action="store_true", help="If this option is given, the weights will be frozen and only biases will be trained. This option is ignored if there is no in_file")
 parser.add_argument("-w", dest="freeze_weights", action="store_true", help="This will only freeze the weights in the very first layer, and nothing else, allowing you to re-train these after stabilization")
+parser.add_argument("-m", dest="model_type", action="store", default=None, help="The type of the model to do. Can be linear")
 
 args = parser.parse_args()
 
@@ -23,6 +24,14 @@ coarse = int(args.checkpoints)
 status_file = args.status_file
 do_biases = args.do_biases
 freeze_weights = args.freeze_weights
+model_type = args.model_type
+
+if do_biases:
+  model_flavor = "fixed_weight_model"
+elif freeze_weights:
+  model_flavor = "frozen_layer_model"
+else:
+  model_flavor = None
 
 import tensorflow as tf
 from tensorflow import keras
@@ -32,7 +41,7 @@ import matplotlib.pyplot as plt
 
 from src.data import get_data
 
-from src.models import get_new_model, get_new_mnist_model, load_model, load_mnist_model
+from src.models import load_general_model
 from src.status import save_status
 
 # put headers on status_file
@@ -41,31 +50,7 @@ save_status(status_file, "epoch loss accuracy")
 
 x_train, y_train, x_test, y_test = get_data(dataset)
 
-if in_file is None:
-  if "mnist" in dataset:
-    model = get_new_mnist_model(x_train, y_train, activation, 1024)
-  else:
-    model = get_new_model(x_train, activation)
-else:
-
-  if do_biases:
-    model_flavor="fixed_weight_model"
-  elif freeze_weights:
-    model_flavor="frozen_layer_model"
-  else:
-    model_flavor=None
-
-  if "mnist" in dataset:
-    model, _ = load_mnist_model(x_train, y_train, in_file, 1024, flavor=model_flavor)
-    # freeze_weights option requires a fake model to save the weights
-    if freeze_weights or do_biases:
-      fake_model = get_new_mnist_model(x_train, y_train, activation, 1024)
-  else:
-    model, _ = load_model(x_train, in_file, flavor=model_flavor)
-    if freeze_weights or do_biases:
-      fake_model = get_new_model(x_train, activation)
-
-
+model, fake_model = load_general_model(x_train, y_train, in_file, 1024, model_flavor, model_type, activation)
 
 # if coarse is 0, interpret as no coarsening
 if coarse == 0:

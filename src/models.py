@@ -52,10 +52,17 @@ def get_model(input_shape, output_shape, activation, layer_size):
   -------
   a keras Sequential model
   """
-  model = keras.Sequential([
-    keras.layers.Dense(layer_size, activation=activation, input_shape=input_shape),
-    keras.layers.Dense(output_shape, activation='softmax')
-  ])
+  if layer_size > 0:
+    model = keras.Sequential([
+      keras.layers.Dense(layer_size, activation=activation, input_shape=input_shape),
+      keras.layers.Dense(output_shape, activation='softmax')
+    ])
+  else:
+    model = keras.Sequential([
+      keras.layers.Dense(1, activation=activation, input_shape=input_shape),
+      keras.layers.Dense(2, activation='softmax', trainable=False,
+                         weights=(np.asarray([[1, -1]]), np.asarray([0, 0])))
+    ])
 
   model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
@@ -67,10 +74,17 @@ def get_logit_model(input_shape, output_shape, activation, layer_size):
   """
     Replicates the functionality of "get_model", except the last layer is logits instead of soft_max
   """
-  model = keras.Sequential([
-    keras.layers.Dense(layer_size, activation=activation, input_shape=input_shape),
-    keras.layers.Dense(output_shape) # no activation function
-  ])
+  if layer_size > 0:
+    model = keras.Sequential([
+      keras.layers.Dense(layer_size, activation=activation, input_shape=input_shape),
+      keras.layers.Dense(output_shape) # no activation function
+    ])
+  else:
+    model = keras.Sequential([
+      keras.layers.Dense(1, activation=activation, input_shape=input_shape),
+      keras.layers.Dense(2, trainable=False,
+                         weights=(np.asarray([[1, -1]]), np.asarray([0, 0])))
+    ])
 
   model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
@@ -86,11 +100,19 @@ def get_fixed_weight_model(input_shape, output_shape, activation, layer_size):
   # define a new layer without biases and make activation linear
   # then a layer after it which is just biases and has the activation function
   # this then behaves exactly like a Dense layer  
-  model = keras.Sequential([
-    keras.layers.Dense(layer_size, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
-    BiasLayer(activation=activation),
-    keras.layers.Dense(output_shape, activation="softmax", trainable=False)
-  ])
+  if layer_size > 0:
+    model = keras.Sequential([
+      keras.layers.Dense(layer_size, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
+      BiasLayer(activation=activation),
+      keras.layers.Dense(output_shape, activation="softmax", trainable=False)
+    ])
+  else:
+    model = keras.Sequential([
+      keras.layers.Dense(1, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
+      BiasLayer(activation=activation),
+      keras.layers.Dense(2, activation='softmax', trainable=False,
+                         weights=(np.asarray([[1, -1]]), np.asarray([0, 0])))
+    ])
 
   model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
@@ -106,12 +128,20 @@ def get_frozen_layer_model(input_shape, output_shape, activation, layer_size):
   # cute trick for only freezing the weights
   # define a new layer without biases and make activation linear
   # then a layer after it which is just biases and has the activation function
-  # this then behaves exactly like a Dense layer  
-  model = keras.Sequential([
-    keras.layers.Dense(layer_size, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
-    BiasLayer(activation=activation),
-    keras.layers.Dense(output_shape, activation="softmax", trainable=True)
-  ])
+  # this then behaves exactly like a Dense layer
+  if layer_size > 0:
+    model = keras.Sequential([
+      keras.layers.Dense(layer_size, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
+      BiasLayer(activation=activation),
+      keras.layers.Dense(output_shape, activation="softmax", trainable=True)
+    ])
+  else:
+    model = keras.Sequential([
+      keras.layers.Dense(1, activation="linear", use_bias=False, input_shape=input_shape, trainable=False),
+      BiasLayer(activation=activation),
+      keras.layers.Dense(2, activation='softmax', trainable=False,
+                         weights=(np.asarray([[1, -1]]), np.asarray([0, 0])))
+    ])
 
   model.compile(optimizer=optimizer,
                 loss='sparse_categorical_crossentropy',
@@ -145,6 +175,7 @@ def get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor=No
   """
 
   # get the number of output classes
+  # TODO: this is a bug. Fix it.
   output_shape = np.amax(y_train) + 1
   print(output_shape)
   return get_new_model_helper(x_train.shape[1:], output_shape, activation_name, layer_size, flavor)
@@ -245,7 +276,7 @@ def load_mnist_model(x_train, y_train, file_name, layer_size, flavor=None):
   -------
   A keras Sequential model
   """
-  return load_model_helper(x_train, y_train, file_name, layer_size, flavor)
+  return load_model_helper(x_train, y_train, file_name, layer_size, flavor)[0]
 
 def load_model(x_train, file_name, flavor=None):
   """
@@ -267,12 +298,12 @@ def load_model(x_train, file_name, flavor=None):
   -------
   A keras Sequential model
   """
-  return load_model_helper(x_train, None, file_name, 16, flavor)
+  return load_model_helper(x_train, None, file_name, 16, flavor)[0]
 
-def load_general_model(x_train, y_train, file_name, layer_size, flavor=None, model_type=None):
-  return load_model_helper(x_train, y_train, file_name, layer_size, flavor, model_type)
+def load_general_model(*args, **kwargs):
+  return load_model_helper(*args, **kwargs)
 
-def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, model_type=None):
+def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, model_type=None, activation_name=None):
   """
   Loads model from a file
 
@@ -296,17 +327,20 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, mode
   -------
   A keras Sequential model
   """
-  colon_index = file_name.find(":")
-  try:
-    assert(colon_index > 0)
-  except Exception as e:
-    print("You must pass models in the format {file_name.h5}:{activation_name}")
-    raise e
+  if file_name is not None and activation_name is None:
+    colon_index = file_name.find(":")
+    try:
+      assert (colon_index > 0)
+    except Exception as e:
+      print("You must pass models in the format {file_name.h5}:{activation_name}")
+      raise e
 
-  weights_file = file_name[0:colon_index]
-  activation_name = file_name[colon_index+1:]
+    weights_file = file_name[0:colon_index]
+    activation_name = file_name[colon_index + 1:]
+  else:
+    assert(activation_name is not None)
 
-  needs_reload = (flavor == "fixed_weight_model" or flavor == "frozen_layer_model")
+  needs_reload = (flavor == "fixed_weight_model" or flavor == "frozen_layer_model") and file_name is not None
 
   first_flavor = flavor
 
@@ -316,18 +350,22 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, mode
   if model_type == None:
     # this is here for backwards compatibility from when you did not need to specify the model_type
     if y_train is None:
-      model_type = "mnist"
-    else:
       model_type = "pdf"
+    else:
+      model_type = "mnist"
 
-  if model_type == "mnist":
+  if model_type == "pdf":
     first_model = get_new_model(x_train, activation_name, flavor=first_flavor)
-  elif model_type == "pdf" or model_type == "pdfrate" or model_type == "hidost":
+  elif model_type == "mnist":
     first_model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, first_flavor)
   elif model_type == "linear":
-    first_model = get_new_linear_model(x_train, activation_name, first_flavor)
+    first_model = get_new_model_helper(x_train.shape[1:], 2, activation_name, 0, first_flavor)
 
   first_model.build(x_train.shape)
+
+  if file_name is None:
+    return first_model, None
+
   first_model.load_weights(weights_file)
 
   # get the weights out of the first model and into the model of the actual flavor we want
@@ -340,7 +378,7 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, mode
     elif model_type == "pdf":
       model = get_new_mnist_model(x_train, y_train, activation_name, layer_size, flavor)
     elif model_type == "linear":
-      model = get_new_linear_model(x_train, activation_name, flavor)
+      model = get_new_model_helper(x_train.shape[1:], 2, activation_name, 0, flavor)
  
     model.build(x_train.shape)
     model.set_weights(weights)
@@ -348,7 +386,7 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, mode
   else:
     model = first_model
 
-  return model, activation_name
+  return model, first_model
 
 
 def sign(tensor):
