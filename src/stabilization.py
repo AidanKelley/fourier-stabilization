@@ -145,39 +145,80 @@ def code_coefficients(layer, codes, test_data=None, predictions=None, N=100000):
 
   return tf.concat(tensors, axis=0)
 
-
+# model is the model to be stabilized
+# validation_x, validation_y are the x and y from the validation datasets
+# threshhold is the minimum allowable accuracy,
+# the algorithm greedily tries to maximize robustness
+# while maintaining a minimum accuracy of the threshhold
+# allowed_layers allows you to note multiple layers that can be stabilized.
+# note that, however, that in tensorflow biases for one layer are their own layer.
+# thus, if you wanted to allow the weights of the first and second layerss
+# to be stabilized, you would set
+# allowed layers to be (0, 2), with the 0 being the weights of the first layer
+# and the 2 the weights of the 2nd.
+# If the "fast" option is enabled, the algorithm uses an estimate for the change in
+# accuracy which is not as good as the actual calculation. However, it is in fact very fast
 def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), fast=False):
   # iteratively stabilize a neuron with the highest "efficiency" but without breaking the threshhold
   # currently, the "fast" version, which I haven't really tested, will output a model just under the threshold
 
-  def stabilize_neuron(layer_index, neuron_index):
+  def stabilize_neuron(layer_index, neuron_index, tentative=False):
+    # if tentative, the change will only be made
+    # if the accuracy threshhold is respected.
+
     current = model.get_weights()
     layer = current[layer_index]
 
     neuron_weights = layer[:, neuron_index]
+
+    old_neuron_weights = None
+    if tentative:
+      old_neuron_weights = tf.identity(neuron_weights)
+
     neuron_l_inf = tf.norm(neuron_weights, ord=np.inf)
     new_neuron_weights = tf.math.sign(neuron_weights) * neuron_l_inf
 
     layer[:, neuron_index] = new_neuron_weights
 
     current[layer_index] = layer
-    model.set_weights(current_weights)
+    model.set_weights(current)
 
-  should_continue = False
+    if tentative:
+      # if below the threshold, revert the change
+      _, acc = model.evaluate(validation_x, validation_y)
+
+      if acc < thresh:
+        layer[:, neuron_index] = old_neuron_weights
+        current[layer_index] = layer
+        model.set_weights(current)
+
+      return acc
+    else:
+      return None
+
+
+  already_changed = set()
+
+  should_continue = True
+
+  # get current accuracy so we can compute the change in accuarcy
+  _, current_accuracy = model.evaluate(validation_x, validation_y)
+
+  # if we start and are already below the threshhold, we should return.
+  if current_accuracy < thresh:
+    should_continue = False
+
   while should_continue:
     # try out all the neurons everywhere
     best_neuron_layer = None
     best_neuron_index = None
     best_neuron_efficiency = None
 
-    # get current accuracy so we can compute the change in accuarcy
-    _, current_accuracy = model.evaluate(validation_x, validation_y)
+
 
     print(f"current acc: {current_accuracy}")
 
-    # if we start and are already below the threshhold, we should return.
-    if current_accuracy < thresh:
-      return model
+
 
     for layer_index in allowed_layers:
       # first, compute some layer-specific numbers that will come in handy
@@ -189,7 +230,9 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
         l2_norms = tf.norm(layer_weights, ord=2, axis=0)
         delta_accs = (l_inf_norms / l2_norms).numpy()
 
-      layer_size = layer_weights.size()[0]
+      layer_size = layer_weights.shape[0]
+      neuron_count = layer_weights.shape[1]
+      print(f"layer_shape: {layer_weights.shape}")
       print(f"layer size: {layer_size}")
 
       # compute change in robustness for whole layer
@@ -200,35 +243,45 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
       # this is why layer size is involved in the calculation
       delta_robs = (layer_size - (l1_norms / l_inf_norms)).numpy()
 
-      for neuron_index in range(layer_size):
-        accuracy_ok = True
-        # compute the change in robustness
-        delta_rob = delta_robs[neuron_index]
+      for neuron_index in range(neuron_count):
+        if (layer_index, neuron_index) not in already_changed:
+          accuracy_ok = True
+          # compute the change in robustness
+          delta_rob = delta_robs[neuron_index]
 
-        # compute the change in accuracy
-        if fast:
-          delta_acc = delta_accs[neuron_index]
-        else:
-          # actually make the change to the model and see what happens
-          stabilize_neuron(layer_index, neuron_index)
+          # compute the change in accuracy
+          if fast:
+            delta_acc = delta_accs[neuron_index]
+          else:
+            # actually make the change to the model and see what happens
+            stabilize_neuron(layer_index, neuron_index)
 
-          # compute accuracy after this change
-          _, model_accuracy = model.evaluate(validation_x, validation_y)
+            # compute accuracy after this change
+            _, model_accuracy = model.evaluate(validation_x, validation_y, verbose=0)
 
-          if model_accuracy < thresh:
-            accuracy_ok = False
+            if model_accuracy < thresh:
+              accuracy_ok = False
 
-          delta_acc = current_accuracy - model_accuracy
+            delta_acc = current_accuracy - model_accuracy
 
-        efficiency = delta_rob / delta_acc
+          # sometimes, the delta_acc may be 0, or even negative
+          # we're going to correct this by just making it a
+          # really small positive number instead
+          # then, the algorithm will essentially rank on
+          # just robustenss
 
-        print(f"layer: {layer_index}, neuron: {neuron_index}, rob: {delta_rob}, acc: {delta_acc}, ok: {accuracy_ok}")
+          if delta_acc <= 0:
+            delta_acc = 1e-20
 
-        if accuracy_ok:
-          if best_neuron_efficiency is None or efficiency > best_neuron_efficiency:
-            best_neuron_layer = layer_index
-            best_neuron_index = neuron_index
-            best_neuron_efficiency = efficiency
+          efficiency = delta_rob / delta_acc
+
+          print(f"layer: {layer_index}, neuron: {neuron_index}, rob: {delta_rob}, acc: {delta_acc}, ok: {accuracy_ok}")
+
+          if accuracy_ok and (layer_index, neuron_index) not in already_changed:
+            if best_neuron_efficiency is None or efficiency > best_neuron_efficiency:
+              best_neuron_layer = layer_index
+              best_neuron_index = neuron_index
+              best_neuron_efficiency = efficiency
 
       # reset the model at the end of considering the current layer
 
@@ -244,7 +297,10 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
     assert(best_neuron_index is not None)
     assert(best_neuron_layer is not None)
 
-    stabilize_neuron(best_neuron_layer, best_neuron_index)
+    print(f"changing neuron at layer: {best_neuron_layer} index: {best_neuron_index}")
+
+    current_accuracy = stabilize_neuron(best_neuron_layer, best_neuron_index, tentative=True)
+    already_changed.add((best_neuron_layer, best_neuron_index))
 
   return model
 
