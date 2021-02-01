@@ -161,12 +161,14 @@ def get_data(dataset):
   print(f"dataset: {dataset} codes: {code_file}")
 
   # see if we should do a restriction or not
+  restriction = None
   pipe_index = dataset.find(",")
   if pipe_index >= 0:
     restriction_str = dataset[pipe_index + 1:]
     restriction = [int(digit) for digit in restriction_str.split(",")]
     dataset = dataset[0:pipe_index]
 
+  data = None
   if dataset == "pdfrate":
     data = get_pdfrate(test)
   elif dataset == "hidost":
@@ -194,9 +196,9 @@ def get_data(dataset):
   else:
     quit("invalid dataset")
 
-  # TODO: perform the restriction
   # we want only the subset of the data that has y \in restrictions
-  data = perform_restriction(data, restriction)
+  if restriction is not None:
+    data = perform_restriction(data, restriction)
 
   if code_file is not None and len(code_file) > 0:
     data = get_coded(data, code_file)
