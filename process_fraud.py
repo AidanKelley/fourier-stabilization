@@ -27,27 +27,25 @@ y = np.array(classes, dtype=np.int)
 
 X_data, y_data = SMOTE().fit_resample(X, y)
 
-print("dide the smote")
+# partition now
+from src.data import create_partition
+x_train, y_train, x_test, y_test = create_partition(X_data, y_data, p_train=0.5)
 
-print(X_data.shape)
+medians = np.median(x_train, axis=0)
 
-medians = np.median(X_data, axis=0)
+x_train_medianed = x_train - medians
+x_test_medianed = x_test - medians
 
-almost_normal = X_data - medians
+def write_to_file(x_out, y_out, filename):
+    data_to_write = list(x_out)
 
-binarized = np.sign(almost_normal)
-
-data_to_write = list(binarized)
-
-with open(filename_train, "w") as train_file:
-    with open(filename_test, "w") as test_file:
+    with open(filename, "w") as out_file:
         for line_index, line in enumerate(data_to_write):
             line_out_array = [f"{index}:1" for index, x in enumerate(line)
                               if x > 0]
 
-            line_out = str(y_data[line_index]) + " " + " ".join(line_out_array) + "\n"
+            line_out = str(y_out[line_index]) + " " + " ".join(line_out_array) + "\n"
+            out_file.write(line_out)
 
-            if random.randint(1, 2) == 1:
-                train_file.write(line_out)
-            else:
-                test_file.write(line_out)
+write_to_file(x_train_medianed, y_train, filename_train)
+write_to_file(x_test_medianed, y_test, filename_test)
