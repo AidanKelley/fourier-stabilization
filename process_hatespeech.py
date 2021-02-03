@@ -1,7 +1,9 @@
 import csv
+import random
 
 filename = "hatespeech/gab.csv"
-filename_out = "hatespeech/gab_processed.libsvm"
+filename_train = "hatespeech/gab_train.libsvm"
+filename_test = "hatespeech/gab_test.libsvm"
 
 n_top = 1000
 
@@ -58,19 +60,24 @@ used_words_and_indices = {word: index for index, (word, _) in enumerate(top_n)}
 
 # now, we'll generate the output data
 
-with open(filename_out, "w") as out_file:
-    for bag_index, bag in enumerate(all_the_bags):
-        word_included = [False for _ in range(n_top)]
+with open(filename_train, "w") as train_file:
+    with open(filename_test, "w") as test_file:
+        for bag_index, bag in enumerate(all_the_bags):
+            word_included = [False for _ in range(n_top)]
 
-        for word in bag:
-            if word in used_words_and_indices:
-                word_index = used_words_and_indices[word]
-                word_included[word_index] = True
+            for word in bag:
+                if word in used_words_and_indices:
+                    word_index = used_words_and_indices[word]
+                    word_included[word_index] = True
 
-        line_array = [f"{index}:1" for index, included in enumerate(word_included)
-                      if included]
+            line_array = [f"{index}:1" for index, included in enumerate(word_included)
+                          if included]
 
-        y = hate_y[bag_index]
-        line = str(y) + " " + " ".join(line_array) + "\n"
+            y = hate_y[bag_index]
+            line = str(y) + " " + " ".join(line_array) + "\n"
 
-        out_file.write(line)
+            # split into two files
+            if random.randint(1, 2) == 1:
+                train_file.write(line)
+            else:
+                test_file.write(line)
