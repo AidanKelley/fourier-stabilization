@@ -1,0 +1,76 @@
+import csv
+
+filename = "hatespeech/gab.csv"
+filename_out = "hatespeech/gab_processed.libsvm"
+
+n_top = 1000
+
+with open(filename, "r") as file_in:
+    # headers: id, text, indices that are hatespeech (1 indexed), responses
+    reader = csv.reader(file_in)
+
+    rows = (row for index, row in enumerate(reader) if index != 0)
+    count = 0
+
+    all_the_bags = []
+    hate_y = []
+
+    word_freqs = {}
+
+    for row in rows:
+
+        all_text = row[1]
+        bags_of_words = [
+            [
+                word.lower()
+                for index, word in enumerate(line.replace("\t", "").split(" "))
+                if index != 0
+            ]
+            for line in all_text.split("\n")
+        ]
+
+        number_of_entries = len(bags_of_words)
+
+        hate_indices = row[2]
+
+        is_it_hate = [1 if str(index + 1) in hate_indices else 0
+                      for index in range(number_of_entries)]
+
+        all_the_bags += bags_of_words
+        hate_y += is_it_hate
+
+        all_words = (word for bag in bags_of_words for word in bag)
+
+        for word in all_words:
+            if word in word_freqs:
+                word_freqs[word] += 1
+            else:
+                word_freqs[word] = 1
+
+
+word_freq_pairs = [(word, freq) for word, freq in word_freqs.items()]
+
+word_freq_pairs.sort(key=lambda x: x[1], reverse=True)
+
+top_n = word_freq_pairs[0:n_top]
+
+used_words_and_indices = {word: index for index, (word, _) in enumerate(top_n)}
+
+# now, we'll generate the output data
+
+with open(filename_out, "w") as out_file:
+    for bag_index, bag in enumerate(all_the_bags):
+        word_included = [False for _ in range(n_top)]
+
+        for word in bag:
+            if word in used_words_and_indices:
+                word_index = used_words_and_indices[word]
+                word_included[word_index] = True
+
+        line_array = [f"{index}:1" for index, included in enumerate(word_included)
+                      if included]
+
+        y = hate_y[bag_index]
+        line = str(y) + " " + " ".join(line_array) + "\n"
+
+        out_file.write(line)
