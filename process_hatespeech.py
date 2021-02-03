@@ -7,15 +7,16 @@ filename_test = "hatespeech/gab_test.libsvm"
 
 n_top = 1000
 
+all_the_bags = []
+hate_y = []
+test_train_assignments = []
+
 with open(filename, "r") as file_in:
     # headers: id, text, indices that are hatespeech (1 indexed), responses
     reader = csv.reader(file_in)
 
     rows = (row for index, row in enumerate(reader) if index != 0)
     count = 0
-
-    all_the_bags = []
-    hate_y = []
 
     word_freqs = {}
 
@@ -38,10 +39,16 @@ with open(filename, "r") as file_in:
         is_it_hate = [1 if str(index + 1) in hate_indices else 0
                       for index in range(number_of_entries)]
 
+        the_split = [random.randint(0, 1) for _ in bags_of_words]
+
         all_the_bags += bags_of_words
         hate_y += is_it_hate
+        test_train_assignments += the_split
 
-        all_words = (word for bag in bags_of_words for word in bag)
+        # only use words in the train partition
+        all_words = (word for index, bag in enumerate(bags_of_words)
+                     if the_split[index] == 0
+                     for word in bag)
 
         for word in all_words:
             if word in word_freqs:
@@ -50,10 +57,12 @@ with open(filename, "r") as file_in:
                 word_freqs[word] = 1
 
 
+number_of_bags = len(all_the_bags)
+
 word_freq_pairs = [(word, freq) for word, freq in word_freqs.items()]
 
+# get the top n words from the training set
 word_freq_pairs.sort(key=lambda x: x[1], reverse=True)
-
 top_n = word_freq_pairs[0:n_top]
 
 used_words_and_indices = {word: index for index, (word, _) in enumerate(top_n)}
@@ -77,7 +86,7 @@ with open(filename_train, "w") as train_file:
             line = str(y) + " " + " ".join(line_array) + "\n"
 
             # split into two files
-            if random.randint(1, 2) == 1:
+            if test_train_assignments[bag_index] == 0:
                 train_file.write(line)
             else:
                 test_file.write(line)
