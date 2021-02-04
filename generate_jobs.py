@@ -25,12 +25,12 @@ for filename in os.listdir(dir):
 #BSUB -N
 #BSUB -R '(!gpu)'
 #BSUB -R "rusage[mem=10]"
-#BSUB -J hidost_brendel
+#BSUB -J {out_name}
 
 cd ~/codnn
 source env/bin/activate
 
-python attack.py brendel \\
+python attack.py {attack} \\
   -d {dataset} -i {dir}/{filename}:custom_sigmoid \\
   --all -o attack_data/{out_name}.json -m pdf
 """
