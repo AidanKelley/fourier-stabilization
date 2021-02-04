@@ -5,7 +5,7 @@ filename = "hatespeech/gab.csv"
 filename_train = "hatespeech/gab_train.libsvm"
 filename_test = "hatespeech/gab_test.libsvm"
 
-n_top = 1000
+n_top = 200
 
 all_the_bags = []
 hate_y = []
@@ -63,9 +63,22 @@ word_freq_pairs = [(word, freq) for word, freq in word_freqs.items()]
 
 # get the top n words from the training set
 word_freq_pairs.sort(key=lambda x: x[1], reverse=True)
-top_n = word_freq_pairs[0:n_top]
 
-used_words_and_indices = {word: index for index, (word, _) in enumerate(top_n)}
+from sklearn.feature_extraction import stop_words
+
+top_n = []
+index = 0
+while len(top_n) < n_top and index < len(word_freq_pairs):
+    word_to_try = word_freq_pairs[index][0]
+
+    if word_to_try not in stop_words.ENGLISH_STOP_WORDS and word_to_try != "":
+        top_n.append(word_to_try)
+
+    index += 1
+
+print(top_n)
+
+used_words_and_indices = {word: index for index, word in enumerate(top_n)}
 
 # now, we'll generate the output data
 
