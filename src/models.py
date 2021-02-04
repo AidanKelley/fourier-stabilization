@@ -327,6 +327,10 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, mode
   -------
   A keras Sequential model
   """
+
+  # this change is just here to make everything work alright for now
+  layer_size = 16
+
   if file_name is not None and activation_name is None:
     colon_index = file_name.find(":")
     try:

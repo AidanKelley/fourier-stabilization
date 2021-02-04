@@ -17,8 +17,10 @@ with open(filename_in, "r") as in_file:
 
     for index, line in enumerate(reader):
         if index != 0:
-            rows.append(line[0:-1])
-            classes.append(line[-1])
+            # append if it is fradulent or with 10% chance otherwise
+            if int(line[-1]) == 1 or random.randint(1, 10) == 10:
+                rows.append(line[0:-1])
+                classes.append(line[-1])
 
 print("read the file")
 

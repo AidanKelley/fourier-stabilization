@@ -118,7 +118,7 @@ if attack == "custom_jsma":
       current_class = int(y_test[test_index])
       x0 = x_test[test_index]
 
-      norm, _ = l0_multiclass_attack(x0, current_class, np.amax(y_test) + 1, model, change_at_once=8)
+      norm, _ = l0_multiclass_attack(x0, current_class, np.amax(y_test) + 1, model, change_at_once=1)
       min_norms[index].append(norm)
       print(min_norms)
         

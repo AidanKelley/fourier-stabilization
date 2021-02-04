@@ -23,7 +23,6 @@ def create_partition(x_orig_train, y_orig_train, p_train=0.2):
 
   # calculate how much to put in each partition
   test_size = int(x_orig_train.shape[0] * p_train)
-
   # split up the training and testing data in the same way
   testing_indices = random_indices[:test_size] # all before test_size
   training_indices = random_indices[test_size:] # all after test_size
@@ -59,6 +58,37 @@ def get_hidost(test=False):
    x_test, y_test = test_data[0].toarray(), test_data[1]
 
   return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
+
+def get_hatespeech(test=False):
+  train_data = datasets.load_svmlight_file("hatespeech/gab_train.libsvm", n_features=200, zero_based=True)
+  x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
+
+  x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
+
+  if test:
+    test_data = datasets.load_svmlight_file("hatespeech/gab_test.libsvm", n_features=200, zero_based=True)
+    x_test, y_test = test_data[0].toarray(), test_data[1]
+
+  x_train = 1 - 2 * x_train
+  x_test = 1 - 2 * x_test
+
+  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
+
+def get_fraud(test=False):
+  train_data = datasets.load_svmlight_file("fraud/creditcard_train.libsvm", n_features=30, zero_based=True)
+  x_orig_train, y_orig_train = train_data[0].toarray(), train_data[1]
+
+  x_train, y_train, x_test, y_test = create_partition(x_orig_train, y_orig_train)
+
+  if test:
+    test_data = datasets.load_svmlight_file("fraud/creditcard_test.libsvm", n_features=30, zero_based=True)
+    x_test, y_test = test_data[0].toarray(), test_data[1]
+
+  x_train = 1 - 2 * x_train
+  x_test = 1 - 2 * x_test
+
+  return cast_float(x_train), cast_int(y_train), cast_float(x_test), cast_int(y_test)
+
 
 def mnist_do_option(x_orig_train, option):
   if option is not None:
@@ -177,6 +207,10 @@ def get_data(dataset):
   elif dataset == "hidost_scaled":
     x_train, y_train, x_test, y_test = get_hidost(test)
     data = (1 - 2 * x_train, y_train, 1 - 2 * x_test, y_test)
+  elif dataset == "hatespeech":
+    data = get_hatespeech(test)
+  elif dataset == "fraud":
+    data = get_fraud(test)
   elif dataset == "mnist":
     data = get_mnist(None, test)
   elif dataset == "mnist_gray":

@@ -158,7 +158,7 @@ def code_coefficients(layer, codes, test_data=None, predictions=None, N=100000):
 # and the 2 the weights of the 2nd.
 # If the "fast" option is enabled, the algorithm uses an estimate for the change in
 # accuracy which is not as good as the actual calculation. However, it is in fact very fast
-def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), fast=False):
+def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), no_accuracy=False):
   # iteratively stabilize a neuron with the highest "efficiency" but without breaking the threshhold
   # currently, the "fast" version, which I haven't really tested, will output a model just under the threshold
 
@@ -226,10 +226,6 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
       l_inf_norms = tf.norm(layer_weights, ord=np.inf, axis=0)
       l1_norms = tf.norm(layer_weights, ord=1, axis=0)
 
-      if fast:
-        l2_norms = tf.norm(layer_weights, ord=2, axis=0)
-        delta_accs = (l_inf_norms / l2_norms).numpy()
-
       layer_size = layer_weights.shape[0]
       neuron_count = layer_weights.shape[1]
       print(f"layer_shape: {layer_weights.shape}")
@@ -250,8 +246,8 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
           delta_rob = delta_robs[neuron_index]
 
           # compute the change in accuracy
-          if fast:
-            delta_acc = delta_accs[neuron_index]
+          if no_accuracy:
+            efficiency = delta_rob
           else:
             # actually make the change to the model and see what happens
             stabilize_neuron(layer_index, neuron_index)
@@ -264,18 +260,18 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
 
             delta_acc = current_accuracy - model_accuracy
 
-          # sometimes, the delta_acc may be 0, or even negative
-          # we're going to correct this by just making it a
-          # really small positive number instead
-          # then, the algorithm will essentially rank on
-          # just robustenss
+            # sometimes, the delta_acc may be 0, or even negative
+            # we're going to correct this by just making it a
+            # really small positive number instead
+            # then, the algorithm will essentially rank on
+            # just robustenss
 
-          if delta_acc <= 0:
-            delta_acc = 1e-20
+            if delta_acc <= 0:
+              delta_acc = 1e-20
 
-          efficiency = delta_rob / delta_acc
+            efficiency = delta_rob / delta_acc
 
-          print(f"layer: {layer_index}, neuron: {neuron_index}, rob: {delta_rob}, acc: {delta_acc}, ok: {accuracy_ok}")
+          print(f"layer: {layer_index}, neuron: {neuron_index}, rob: {delta_rob}, acc: {'none' if no_accuracy else delta_acc}, ok: {accuracy_ok}")
 
           if accuracy_ok and (layer_index, neuron_index) not in already_changed:
             if best_neuron_efficiency is None or efficiency > best_neuron_efficiency:
