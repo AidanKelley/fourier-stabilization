@@ -3,20 +3,24 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 
 parser.add_argument("data_file", action="store", help="The json file containing the results of a robustness experiment (from attack.py)")
-parser.add_argument("-o", dest="out_dir", action="store", help="The directory in which to save the results of the experiment")
+parser.add_argument("-o", dest="out_dir", action="store", help="The directory in which to save the results of the experiment", default=None)
 parser.add_argument("-s", dest="smooth", action="store_true", help="Use this option to generate a graph without the bumps. This will then no longer exactly be the robustness, but will be a lower bound on the graph without this option. It is recommended to not use this option.")
+parser.add_argument("-a", dest="one", action="store_true")
 
 args = parser.parse_args()
 
 data_file = args.data_file
 out_dir = args.out_dir
 smooth = args.smooth
+just_one = args.one
 
 # load the data
 import json
 
 with open(data_file, "r") as data_handle:
   data = json.load(data_handle)
+
+print("hey")
 
 min_norms = data["min_norms"]
 names = data["file_names"]
@@ -77,6 +81,8 @@ def make_hist(norms):
 
   return x, y
 
+print("hey2")
+
 # if there is an output directory given, save there
 # out files are formatted as a latex pgfplots table
 if out_dir is not None:
@@ -86,6 +92,10 @@ if out_dir is not None:
     coordinates = "".join([f"{x[i]} {y[i]}\n" for i, _ in enumerate(x)])
     out_file = out_dir + "/" + names[index] + ".txt"
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
+
+    if just_one:
+      out_file = os.path.join(out_dir, data_file[0:-5] + ".txt")
+
     with open(out_file, "w") as file_handle:
       file_handle.write("x y\n")
       file_handle.write(coordinates)

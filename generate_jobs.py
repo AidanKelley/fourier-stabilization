@@ -2,7 +2,22 @@ import os
 
 dir = "models"
 
-for filename in os.listdir(dir):
+files = [
+    "fraud_stable_0.96.h5",
+    "fraud_stable_0.97.h5",
+    "fraud_stable_0.98.h5",
+    "hatespeech_stable_0.88.h5",
+    "hatespeech_stable_0.89.h5",
+    "hatespeech_stable_0.90.h5",
+    "hidost_stable_0.996.h5",
+    "hidost_stable_0.993.h5",
+    "hidost_stable_0.99.h5",
+    "pdfrate_stable_0.99.h5",
+    "pdfrate_stable_0.985.h5",
+    "pdfrate_stable_0.98.h5",
+]
+
+for filename in files:
 
     assert(".h5" in filename)
     name = filename.split(".h5")[0]
@@ -32,9 +47,9 @@ source env/bin/activate
 
 python attack.py {attack} \\
   -d {dataset} -i {dir}/{filename}:custom_sigmoid \\
-  --all -o attack_data/{out_name}.json -m pdf
+  --all -o attack_data2/{out_name}.json -m pdf
 """
-        script_name = f"scripts/{out_name}.sh"
+        script_name = f"scripts2/{out_name}.sh"
 
         with open(script_name, "w") as script_out:
             script_out.write(script)
