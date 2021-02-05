@@ -38,10 +38,13 @@ model, _ = load_general_model(x_train, y_train, in_file, 1024, None, None)
 
 print(acc_string_and_values)
 
+already_changed = set()
+
 for acc, acc_string in acc_string_and_values:
 
   # stabilize it
-  model = stabilize_some_l1(model, x_test, y_test, thresh=acc, allowed_layers=(0, 2), no_accuracy=True)
+  model, already_changed = stabilize_some_l1(model, x_test, y_test,
+                                             thresh=acc, allowed_layers=(0, 2), no_accuracy=True, already_changed=already_changed)
 
   # save it
   out_file_name = out_file.replace("{e}", acc_string)

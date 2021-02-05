@@ -1,15 +1,20 @@
-colors = ["red", "orange", "green", "blue", "violet"]
+colors = ["black", "red", "blue", "green", "orange"]
 
 files_dir = "data"
 output_dir = "figures"
 
+no_acc = True
+
+f = "no_acc" if no_acc else ""
+t = "GMB" if no_acc else "GMBC"
+
 plots = [
     {
-        "title": "\\texttt{Hatespeech} \\textbf{BB}",
-        "output": "hatespeech_bb.tex",
+        "title": f"\\texttt{{Hatespeech}} \\textbf{{BB}} {t}",
+        "output": f"hatespeech_bb{f}.tex",
         "xmin": 0,
         "xmax": 6,
-        "xtick": [0, 2, 4, 6],
+        "xtick": [0, 1, 2, 3, 4, 5, 6],
         "series": [
             {
                 "file": "hatespeech_brendel",
@@ -17,18 +22,18 @@ plots = [
             },
             *[
                 {
-                    "file": f"hatespeech_stable_{e}_brendel",
-                    "name": f"stable {e}"
-                } for e in ("0.90", "0.89", "0.88", "0.86")
+                    "file": f"hatespeech_stable_{f}{e}_brendel",
+                    "name": f"$\\beta$ = {e}"
+                } for e in ("0.90", "0.89", "0.88")
             ]
         ]
     },
     {
-        "title": "\\texttt{Hatespeech} \\textbf{JSMA}",
-        "output": "hatespeech_jsma.tex",
+        "title": f"\\texttt{{Hatespeech}} \\textbf{{JSMA}} {t}",
+        "output": f"hatespeech_jsma{f}.tex",
         "xmin": 0,
         "xmax": 6,
-        "xtick": [0, 2, 4, 6],
+        "xtick": [0, 1, 2, 3, 4, 5, 6],
         "series": [
             {
                 "file": "hatespeech_custom_jsma",
@@ -36,86 +41,102 @@ plots = [
             },
             *[
                 {
-                    "file": f"hatespeech_stable_{e}_custom_jsma",
-                    "name": f"stable {e}"
-                } for e in ("0.90", "0.89", "0.88", "0.86")
+                    "file": f"hatespeech_stable_{f}{e}_custom_jsma",
+                    "name": f"$\\beta$ = {e}"
+                } for e in ("0.90", "0.89", "0.88")
             ]
         ]
     },
     {
-        "title": "\\texttt{PDFRate} \\textbf{BB}",
-        "output": "pdfrate_bb.tex",
+        "title": f"\\texttt{{PDFRate}} \\textbf{{BB}} {t}",
+        "output": f"pdfrate_bb{f}.tex",
         "xmin": 0,
-        "xmax": 20,
-        "xtick": [0, 4, 8, 12, 16, 20],
+        "xmax": 28,
+        "xtick": [0, 4, 8, 12, 16, 20, 24, 28],
         "series": [
             {
                 "file": "pdfrate_brendel",
                 "name": "original",
             },
-            *[
-                {
-                    "file": f"pdfrate_stable_{e}_brendel",
-                    "name": f"stable {e}"
-                } for e in ("0.99", "0.985", "0.98", "0.96")
-            ]
+            {
+                "file": f"pdfrate_stable_{f}0.99_brendel",
+                "name": "$\\beta$ = 0.990"
+            },
+            {
+                "file": f"pdfrate_stable_{f}0.985_brendel",
+                "name": "$\\beta$ = 0.985"
+            },
+            {
+                "file": f"pdfrate_stable_{f}0.98_brendel",
+                "name": "$\\beta$ = 0.980"
+            },
         ]
     },
     {
-        "title": "\\texttt{PDFRate} \\textbf{JSMA}",
-        "output": "pdfrate_jsma.tex",
+        "title": f"\\texttt{{PDFRate}} \\textbf{{JSMA}} {t}",
+        "output": f"pdfrate_jsma{f}.tex",
         "xmin": 0,
-        "xmax": 20,
-        "xtick": [0, 4, 8, 12, 16, 20],
+        "xmax": 28,
+        "xtick": [0, 4, 8, 12, 16, 20, 24, 28],
         "series": [
             {
                 "file": "pdfrate_custom_jsma",
                 "name": "original",
             },
-            *[
-                {
-                    "file": f"pdfrate_stable_{e}_custom_jsma",
-                    "name": f"stable {e}"
-                } for e in ("0.99", "0.985", "0.98", "0.96")
-            ]
+            {
+                "file": f"pdfrate_stable_{f}0.99_custom_jsma",
+                "name": "$\\beta$ = 0.990"
+            },
+            {
+                "file": f"pdfrate_stable_{f}0.985_custom_jsma",
+                "name": "$\\beta$ = 0.985"
+            },
+            {
+                "file": f"pdfrate_stable_{f}0.98_custom_jsma",
+                "name": "$\\beta$ = 0.980"
+            },
         ]
     },
     {
-        "title": "\\texttt{Hidost} \\textbf{JSMA}",
-        "output": "hidost_jsma.tex",
+        "title": f"\\texttt{{Hidost}} \\textbf{{JSMA}} {t}",
+        "output": f"hidost_jsma{f}.tex",
         "xmin": 0,
-        "xmax": 80,
-        "xtick": [0, 20, 40, 60, 80],
+        "xmax": 60,
+        "xtick": [0, 12, 24, 36, 48, 60],
         "series": [
             {
                 "file": "hidost_custom_jsma",
                 "name": "original",
             },
-            *[
-                {
-                    "file": f"hidost_stable_{e}_custom_jsma",
-                    "name": f"stable {e}"
-                } for e in ("0.996", "0.993", "0.99", "0.98")
-            ]
+            {
+                "file": f"hidost_stable_{f}0.996_custom_jsma",
+                "name": "$\\beta$ = 0.995"
+            },
+            {
+                "file": f"hidost_stable_{f}0.99_custom_jsma",
+                "name": "$\\beta$ = 0.990"
+            }
         ]
     },
     {
-        "title": "\\texttt{Hidost} \\textbf{BB}",
-        "output": "hidost_bb.tex",
+        "title": f"\\texttt{{Hidost}} \\textbf{{BB}} {t}",
+        "output": f"hidost_bb{f}.tex",
         "xmin": 0,
-        "xmax": 80,
-        "xtick": [0, 20, 40, 60, 80],
+        "xmax": 60,
+        "xtick": [0, 12, 24, 36, 48, 60],
         "series": [
             {
                 "file": "hidost_brendel",
                 "name": "original",
             },
-            *[
-                {
-                    "file": f"hidost_stable_{e}_brendel",
-                    "name": f"stable {e}"
-                } for e in ("0.996", "0.993", "0.99", "0.98")
-            ]
+            {
+                "file": f"hidost_stable_{f}0.996_brendel",
+                "name": "$\\beta$ = 0.995"
+            },
+            {
+                "file": f"hidost_stable_{f}0.99_brendel",
+                "name": "$\\beta$ = 0.990"
+            }
         ]
     }
 ]

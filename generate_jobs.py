@@ -1,21 +1,21 @@
 import os
 
-dir = "models3"
+dir = "models_at"
 
-files = [
-    "fraud_stable_no_acc0.96.h5",
-    "fraud_stable_no_acc0.97.h5",
-    "fraud_stable_no_acc0.98.h5",
-    "hatespeech_stable_no_acc0.88.h5",
-    "hatespeech_stable_0.89.h5",
-    "hatespeech_stable_0.90.h5",
-    "hidost_stable_0.996.h5",
-    "hidost_stable_0.993.h5",
-    "hidost_stable_0.99.h5",
-    "pdfrate_stable_0.99.h5",
-    "pdfrate_stable_0.985.h5",
-    "pdfrate_stable_0.98.h5",
-]
+# files = [
+#     "fraud_stable_no_acc0.96.h5",
+#     "fraud_stable_no_acc0.97.h5",
+#     "fraud_stable_no_acc0.98.h5",
+#     "hatespeech_stable_no_acc0.88.h5",
+#     "hatespeech_stable_0.89.h5",
+#     "hatespeech_stable_0.90.h5",
+#     "hidost_stable_0.996.h5",
+#     "hidost_stable_0.993.h5",
+#     "hidost_stable_0.99.h5",
+#     "pdfrate_stable_0.99.h5",
+#     "pdfrate_stable_0.985.h5",
+#     "pdfrate_stable_0.98.h5",
+# ]
 
 for filename in os.listdir(dir):
 
@@ -47,9 +47,9 @@ source env/bin/activate
 
 python attack.py {attack} \\
   -d {dataset} -i {dir}/{filename}:custom_sigmoid \\
-  --all -o attack_data3/{out_name}.json -m pdf
+  --all -o attack_data_at/{out_name}.json -m pdf
 """
-        script_name = f"scripts3/{out_name}.sh"
+        script_name = f"scripts_at/{out_name}.sh"
 
         with open(script_name, "w") as script_out:
             script_out.write(script)

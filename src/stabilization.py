@@ -158,9 +158,12 @@ def code_coefficients(layer, codes, test_data=None, predictions=None, N=100000):
 # and the 2 the weights of the 2nd.
 # If the "fast" option is enabled, the algorithm uses an estimate for the change in
 # accuracy which is not as good as the actual calculation. However, it is in fact very fast
-def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), no_accuracy=False):
+def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), no_accuracy=False, already_changed=None):
   # iteratively stabilize a neuron with the highest "efficiency" but without breaking the threshhold
   # currently, the "fast" version, which I haven't really tested, will output a model just under the threshold
+
+  if already_changed is None:
+    already_changed = set()
 
   def stabilize_neuron(layer_index, neuron_index, tentative=False):
     # if tentative, the change will only be made
@@ -197,7 +200,6 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
       return None
 
 
-  already_changed = set()
 
   should_continue = True
 
@@ -286,7 +288,7 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
       model.set_weights(current_weights)
 
     if best_neuron_efficiency is None:
-      return model
+      return model, already_changed
 
     # otherwise, make the update
 
@@ -298,7 +300,7 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
     current_accuracy = stabilize_neuron(best_neuron_layer, best_neuron_index, tentative=True)
     already_changed.add((best_neuron_layer, best_neuron_index))
 
-  return model
+  return model, already_changed
 
 
 

@@ -329,7 +329,8 @@ def load_model_helper(x_train, y_train, file_name, layer_size, flavor=None, mode
   """
 
   # this change is just here to make everything work alright for now
-  layer_size = 16
+  # changed to 1024 so we can test the at models
+  layer_size = 1024
 
   if file_name is not None and activation_name is None:
     colon_index = file_name.find(":")
