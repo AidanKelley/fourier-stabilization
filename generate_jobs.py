@@ -1,6 +1,6 @@
 import os
 
-dir = "models_at"
+dir = "models_relu"
 
 # files = [
 #     "fraud_stable_no_acc0.96.h5",
@@ -18,6 +18,9 @@ dir = "models_at"
 # ]
 
 for filename in os.listdir(dir):
+
+    if ".h5" not in filename:
+        continue
 
     assert(".h5" in filename)
     name = filename.split(".h5")[0]
@@ -46,10 +49,10 @@ cd ~/codnn
 source env/bin/activate
 
 python attack.py {attack} \\
-  -d {dataset} -i {dir}/{filename}:custom_sigmoid \\
-  --all -o attack_data_at/{out_name}.json -m pdf
+  -d {dataset} -i {dir}/{filename}:relu \\
+  --all -o attack_data_relu/{out_name}.json -m pdf
 """
-        script_name = f"scripts_at/{out_name}.sh"
+        script_name = f"scripts_relu/{out_name}.sh"
 
         with open(script_name, "w") as script_out:
             script_out.write(script)

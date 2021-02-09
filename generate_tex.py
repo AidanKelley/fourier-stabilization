@@ -3,10 +3,11 @@ colors = ["black", "red", "blue", "green", "orange"]
 files_dir = "data"
 output_dir = "figures"
 
-no_acc = True
+no_acc = False
 
 f = "no_acc" if no_acc else ""
 t = "GMB" if no_acc else "GMBC"
+do_at = False
 
 plots = [
     {
@@ -141,15 +142,203 @@ plots = [
     }
 ]
 
+at_plots = [
+    {
+        "title": f"\\texttt{{PDFRate}}(AT 1-epoch) \\textbf{{BB}} GMB",
+        "output": f"pdfrate_at1_bb.tex",
+        "xmin": 0,
+        "xmax": 24,
+        "xtick": [0, 4, 8, 12, 16, 20, 24],
+        "series": [
+            {
+                "file": "pdfrate_at1_brendel",
+                "name": "AT"
+            },
+            {
+                "file": "pdfrate_at1_stable_brendel",
+                "name": "stable"
+            }
+        ]
+
+    },
+    {
+        "title": f"\\texttt{{PDFRate}}(AT 1-epoch) \\textbf{{JSMA}} GMB",
+        "output": f"pdfrate_at1_jsma.tex",
+        "xmin": 0,
+        "xmax": 24,
+        "xtick": [0, 4, 8, 12, 16, 20, 24],
+        "series": [
+            {
+                "file": "pdfrate_at1_custom_jsma",
+                "name": "AT"
+            },
+            {
+                "file": "pdfrate_at1_stable_custom_jsma",
+                "name": "stable"
+            }
+        ]
+    },
+    {
+        "title": f"\\texttt{{PDFRate}}(AT 5-epoch) \\textbf{{BB}} GMB",
+        "output": f"pdfrate_at5_bb.tex",
+        "xmin": 0,
+        "xmax": 24,
+        "xtick": [0, 4, 8, 12, 16, 20, 24],
+        "series": [
+            {
+                "file": "pdfrate_at5_brendel",
+                "name": "AT"
+            },
+            {
+                "file": "pdfrate_at5_stable_brendel",
+                "name": "stable"
+            }
+        ]
+
+    },
+    {
+        "title": f"\\texttt{{PDFRate}}(AT 5-epoch) \\textbf{{JSMA}} GMB",
+        "output": f"pdfrate_at5_jsma.tex",
+        "xmin": 0,
+        "xmax": 24,
+        "xtick": [0, 4, 8, 12, 16, 20, 24],
+        "series": [
+            {
+                "file": "pdfrate_at5_custom_jsma",
+                "name": "AT"
+            },
+            {
+                "file": "pdfrate_at5_stable_custom_jsma",
+                "name": "stable"
+            }
+        ]
+    },
+    {
+        "title": f"\\texttt{{PDFRate}}(AT 10-epoch) \\textbf{{BB}} GMB",
+        "output": f"pdfrate_at10_bb.tex",
+        "xmin": 0,
+        "xmax": 24,
+        "xtick": [0, 4, 8, 12, 16, 20, 24],
+        "series": [
+            {
+                "file": "pdfrate_at10_brendel",
+                "name": "AT"
+            },
+            {
+                "file": "pdfrate_at10_stable_brendel",
+                "name": "stable"
+            }
+        ]
+
+    },
+    {
+        "title": f"\\texttt{{PDFRate}}(AT 10-epoch) \\textbf{{JSMA}} GMB",
+        "output": f"pdfrate_at5_jsma.tex",
+        "xmin": 0,
+        "xmax": 24,
+        "xtick": [0, 4, 8, 12, 16, 20, 24],
+        "series": [
+            {
+                "file": "pdfrate_at10_custom_jsma",
+                "name": "AT"
+            },
+            {
+                "file": "pdfrate_at10_stable_custom_jsma",
+                "name": "stable"
+            }
+        ]
+    },
+    {
+        "title": f"\\texttt{{Hidost}}(AT 1-epoch) \\textbf{{BB}} GMB",
+        "output": f"hidost_at1_bb.tex",
+        "xmin": 0,
+        "xmax": 60,
+        "xtick": [0, 12, 24, 36, 48, 60],
+        "series": [
+            {
+                "file": "hidost_at1_brendel",
+                "name": "AT"
+            },
+            {
+                "file": "hidost_at1_stable_brendel",
+                "name": "stable"
+            }
+        ]
+    },
+    {
+        "title": f"\\texttt{{Hidost}}(AT 4-epoch) \\textbf{{BB}} GMB",
+        "output": f"hidost_at4_bb.tex",
+        "xmin": 0,
+        "xmax": 60,
+        "xtick": [0, 12, 24, 36, 48, 60],
+        "series": [
+            {
+                "file": "hidost_at4_brendel",
+                "name": "AT"
+            },
+            {
+                "file": "hidost_at4_stable_brendel",
+                "name": "stable"
+            }
+        ]
+    },
+    {
+        "title": f"\\texttt{{Hidost}}(AT 1-epoch) \\textbf{{JSMA}} GMB",
+        "output": f"hidost_at1_jsma.tex",
+        "xmin": 0,
+        "xmax": 60,
+        "xtick": [0, 12, 24, 36, 48, 60],
+        "series": [
+            {
+                "file": "hidost_at1_custom_jsma",
+                "name": "AT"
+            },
+            {
+                "file": "hidost_at1_stable_custom_jsma",
+                "name": "stable"
+            }
+        ]
+    },
+    {
+        "title": f"\\texttt{{Hidost}}(AT 4-epoch) \\textbf{{JSMA}} GMB",
+        "output": f"hidost_at4_jsma.tex",
+        "series": [
+            {
+                "file": "hidost_at4_custom_jsma",
+                "name": "AT"
+            },
+            {
+                "file": "hidost_at4_stable_custom_jsma",
+                "name": "stable"
+            }
+        ]
+    },
+]
+
+if do_at:
+    plots = at_plots
+
 import os
 
 for plot in plots:
 
     title = plot["title"]
     output = plot["output"]
-    xmin = plot["xmin"]
-    xmax = plot["xmax"]
-    xtick = plot["xtick"]
+
+    if "hidost" in output:
+        xmin = 0
+        xmax = 80
+        xtick = [0, 20, 40, 60, 80]
+    elif "pdfrate" in output:
+        xmin = 0
+        xmax = 28
+        xtick = [0, 4, 8, 12, 16, 20, 24, 28]
+    else:
+        assert("hatespeech" in output)
+        xmin = 0
+        xmax = 6
+        xtick = [0, 2, 4, 6]
+
     series = plot["series"]
 
     xtick_text = ",".join([str(i) for i in xtick])

@@ -20,15 +20,15 @@ datasets = [
   "pdfrate", "hidost_scaled", "hatespeech"
 ]
 
-in_files = ["models/pdfrate.h5:custom_sigmoid", "models/hidost.h5:custom_sigmoid", "models/hatespeech.h5:custom_sigmoid"]
+in_files = ["models_relu/pdfrate.h5:relu", "models_relu/hidost.h5:relu", "models_relu/hatespeech.h5:relu"]
 
 
-out_files = ["models_gmbb/pdfrate_gmbb_{e}.h5", "models_gmbb/hidost_gmbb_{e}.h5", "models_gmbb/hatespeech_gmbb{e}.h5"]
+out_files = ["models_relu/pdfrate_{e}.h5", "models_relu/hidost_{e}.h5", "models_relu/hatespeech_{e}.h5"]
 
 accuracies_list = [
-  ["0.990", "0.985", "0.980"],
-  ["0.995", "0.990"],
-  ["0.90", "0.89", "0.88"]
+  ["0.990", "0.985", "0.980", "0.975"],
+  ["0.995", "0.990", "0.980", "0.975"],
+  ["0.90", "0.89", "0.88", "0.87"]
 ]
 
 
@@ -67,7 +67,9 @@ for dataset, in_file, out_file, accuracies in zip(datasets, in_files, out_files,
 
     # stabilize it
     model, already_changed, delta_rob = stabilize_some_l1(model, x_test, y_test,
-                                               thresh=acc, allowed_layers=(0, 2), no_accuracy=False, already_changed=already_changed)
+                                               thresh=acc, allowed_layers=(0, 2), no_accuracy=True, already_changed=already_changed)
+
+
 
     delta_rob_sum += delta_rob
 
@@ -78,35 +80,10 @@ for dataset, in_file, out_file, accuracies in zip(datasets, in_files, out_files,
     # save it
     out_file_name = out_file.replace("{e}", acc_string)
 
+    print(f"Accuracy before saving:")
+    model.evaluate(x_test, y_test)
     model.save_weights(out_file_name)
     print(f"saved to {out_file_name}")
-
-  # reload the model
-  model, _ = load_general_model(x_train, y_train, in_file, 1024, None, None)
-
-  delta_rob_sum = 0
-
-  print(delta_robs)
-
-  already_changed = set()
-
-  for acc, acc_string in acc_string_and_values:
-
-    # stabilize it
-    model, already_changed, delta_rob = stabilize_some_l1(model, x_test, y_test,
-                                               thresh=acc, allowed_layers=(0, 2), no_accuracy=True, already_changed=already_changed)
-
-    delta_rob_sum += delta_rob
-
-    print(f"old: {delta_robs[acc_string]}, new: {delta_rob_sum}")
-
-    # save it IF better
-    if delta_rob_sum > delta_robs[acc_string]:
-      out_file_name = out_file.replace("{e}", acc_string)
-      model.save_weights(out_file_name)
-      print(f"saved to, replaced with GMB version {out_file_name}")
-
-
 
 
 
