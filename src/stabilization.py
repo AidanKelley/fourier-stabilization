@@ -200,7 +200,7 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
       return None
 
 
-
+  total_delta_rob = 0
   should_continue = True
 
   # get current accuracy so we can compute the change in accuarcy
@@ -215,12 +215,9 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
     best_neuron_layer = None
     best_neuron_index = None
     best_neuron_efficiency = None
-
-
+    best_neuron_delta_rob = 0
 
     print(f"current acc: {current_accuracy}")
-
-
 
     for layer_index in allowed_layers:
       # first, compute some layer-specific numbers that will come in handy
@@ -230,8 +227,6 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
 
       layer_size = layer_weights.shape[0]
       neuron_count = layer_weights.shape[1]
-      print(f"layer_shape: {layer_weights.shape}")
-      print(f"layer size: {layer_size}")
 
       # compute change in robustness for whole layer
       # after being stabilized in the l_1 way,
@@ -273,13 +268,14 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
 
             efficiency = delta_rob / delta_acc
 
-          print(f"layer: {layer_index}, neuron: {neuron_index}, rob: {delta_rob}, acc: {'none' if no_accuracy else delta_acc}, ok: {accuracy_ok}")
+          # print(f"layer: {layer_index}, neuron: {neuron_index}, rob: {delta_rob}, acc: {'none' if no_accuracy else delta_acc}, ok: {accuracy_ok}")
 
           if accuracy_ok and (layer_index, neuron_index) not in already_changed:
             if best_neuron_efficiency is None or efficiency > best_neuron_efficiency:
               best_neuron_layer = layer_index
               best_neuron_index = neuron_index
               best_neuron_efficiency = efficiency
+              best_neuron_delta_rob = delta_rob
 
       # reset the model at the end of considering the current layer
 
@@ -288,7 +284,7 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
       model.set_weights(current_weights)
 
     if best_neuron_efficiency is None:
-      return model, already_changed
+      return model, already_changed, total_delta_rob
 
     # otherwise, make the update
 
@@ -299,8 +295,9 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
 
     current_accuracy = stabilize_neuron(best_neuron_layer, best_neuron_index, tentative=True)
     already_changed.add((best_neuron_layer, best_neuron_index))
+    total_delta_rob += best_neuron_delta_rob
 
-  return model, already_changed
+  return model, already_changed, total_delta_rob
 
 
 
