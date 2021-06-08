@@ -1,3 +1,6 @@
+# Enhancing Robustness of Neural Networks through Fourier Stabilization
+This is the codebase for the paper "Enhancing Robustness of Neural Networks through Fourier Stabilization", which will appear in ICML 2021. You can find the paper [here](link to come).
+
 # Welcome!
 Here, we'll explain how to get the testing environment setup and running the experiments that we used to generate the graphs in our paper.
 
