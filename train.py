@@ -47,7 +47,6 @@ from src.status import save_status
 # put headers on status_file
 save_status(status_file, "epoch loss accuracy")
 
-
 x_train, y_train, x_test, y_test = get_data(dataset)
 
 model, fake_model = load_general_model(x_train, y_train, in_file, 16, model_flavor, model_type, activation)

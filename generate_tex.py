@@ -1,7 +1,7 @@
 colors = ["black", "red", "blue", "green", "orange"]
 
 files_dir = "data"
-output_dir = "figures"
+output_dir = "figures_relu"
 
 no_acc = False
 
@@ -21,12 +21,10 @@ plots = [
                 "file": "hatespeech_brendel",
                 "name": "original",
             },
-            *[
-                {
-                    "file": f"hatespeech_stable_{f}{e}_brendel",
-                    "name": f"$\\beta$ = {e}"
-                } for e in ("0.90", "0.89", "0.88")
-            ]
+            {
+                "file": "hatespeech_0.90_brendel",
+                "name": "$\\beta$ = 0.90"
+            }
         ]
     },
     {
@@ -40,12 +38,10 @@ plots = [
                 "file": "hatespeech_custom_jsma",
                 "name": "original",
             },
-            *[
-                {
-                    "file": f"hatespeech_stable_{f}{e}_custom_jsma",
-                    "name": f"$\\beta$ = {e}"
-                } for e in ("0.90", "0.89", "0.88")
-            ]
+            {
+                "file": "hatespeech_0.90_custom_jsma",
+                "name": "$\\beta$ = 0.90"
+            }
         ]
     },
     {
@@ -60,15 +56,15 @@ plots = [
                 "name": "original",
             },
             {
-                "file": f"pdfrate_stable_{f}0.99_brendel",
+                "file": f"pdfrate_{f}0.99_brendel",
                 "name": "$\\beta$ = 0.990"
             },
             {
-                "file": f"pdfrate_stable_{f}0.985_brendel",
+                "file": f"pdfrate_{f}0.985_brendel",
                 "name": "$\\beta$ = 0.985"
             },
             {
-                "file": f"pdfrate_stable_{f}0.98_brendel",
+                "file": f"pdfrate_{f}0.98_brendel",
                 "name": "$\\beta$ = 0.980"
             },
         ]
@@ -85,15 +81,15 @@ plots = [
                 "name": "original",
             },
             {
-                "file": f"pdfrate_stable_{f}0.99_custom_jsma",
+                "file": f"pdfrate_{f}0.99_custom_jsma",
                 "name": "$\\beta$ = 0.990"
             },
             {
-                "file": f"pdfrate_stable_{f}0.985_custom_jsma",
+                "file": f"pdfrate_{f}0.985_custom_jsma",
                 "name": "$\\beta$ = 0.985"
             },
             {
-                "file": f"pdfrate_stable_{f}0.98_custom_jsma",
+                "file": f"pdfrate_{f}0.98_custom_jsma",
                 "name": "$\\beta$ = 0.980"
             },
         ]
@@ -110,11 +106,11 @@ plots = [
                 "name": "original",
             },
             {
-                "file": f"hidost_stable_{f}0.996_custom_jsma",
+                "file": f"hidost_{f}0.996_custom_jsma",
                 "name": "$\\beta$ = 0.995"
             },
             {
-                "file": f"hidost_stable_{f}0.99_custom_jsma",
+                "file": f"hidost_{f}0.99_custom_jsma",
                 "name": "$\\beta$ = 0.990"
             }
         ]
@@ -131,11 +127,11 @@ plots = [
                 "name": "original",
             },
             {
-                "file": f"hidost_stable_{f}0.996_brendel",
+                "file": f"hidost_{f}0.995_brendel",
                 "name": "$\\beta$ = 0.995"
             },
             {
-                "file": f"hidost_stable_{f}0.99_brendel",
+                "file": f"hidost_{f}0.990_brendel",
                 "name": "$\\beta$ = 0.990"
             }
         ]

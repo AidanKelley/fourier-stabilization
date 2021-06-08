@@ -1,0 +1,30 @@
+\documentclass[tikz]{standalone}
+%%% aidan's packages %%%
+% for graphing
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\usepackage{tcolorbox} %%% Must be after pgfplots due to option clash.
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+xmin=0, xmax=80, xtick={0,20,40,60,80},
+ymin=0, ymax=1,
+ylabel = \large Accuracy,
+xlabel = \large $\epsilon$,
+height = 6cm,
+title=\large\texttt{Hidost} \textbf{BB} GMBC
+]
+\addplot[color=black,style=semithick]
+table {data/hidost_brendel.txt};
+\addlegendentry{original}
+\addplot[color=red,style=semithick]
+table {data/hidost_0.995_brendel.txt};
+\addlegendentry{$\beta$ = 0.995}
+\addplot[color=blue,style=semithick]
+table {data/hidost_0.990_brendel.txt};
+\addlegendentry{$\beta$ = 0.990}
+\end{axis}
+\end{tikzpicture}
+\end{document}

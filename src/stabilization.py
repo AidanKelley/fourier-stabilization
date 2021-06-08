@@ -145,6 +145,9 @@ def code_coefficients(layer, codes, test_data=None, predictions=None, N=100000):
 
   return tf.concat(tensors, axis=0)
 
+
+
+
 # model is the model to be stabilized
 # validation_x, validation_y are the x and y from the validation datasets
 # threshhold is the minimum allowable accuracy,
@@ -158,7 +161,7 @@ def code_coefficients(layer, codes, test_data=None, predictions=None, N=100000):
 # and the 2 the weights of the 2nd.
 # If the "fast" option is enabled, the algorithm uses an estimate for the change in
 # accuracy which is not as good as the actual calculation. However, it is in fact very fast
-def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), no_accuracy=False, already_changed=None):
+def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), no_accuracy=False, already_changed=None, verbo=2):
   # iteratively stabilize a neuron with the highest "efficiency" but without breaking the threshhold
   # currently, the "fast" version, which I haven't really tested, will output a model just under the threshold
 
@@ -188,14 +191,15 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
 
     if tentative:
       # if below the threshold, revert the change
-      _, acc = model.evaluate(validation_x, validation_y)
-
+      _, acc = model.evaluate(validation_x, validation_y, verbose=verbo)
+      did_change = True
       if acc < thresh:
         layer[:, neuron_index] = old_neuron_weights
         current[layer_index] = layer
         model.set_weights(current)
+        did_change = False
 
-      return acc
+      return acc, did_change
     else:
       return None
 
@@ -204,7 +208,7 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
   should_continue = True
 
   # get current accuracy so we can compute the change in accuarcy
-  _, current_accuracy = model.evaluate(validation_x, validation_y)
+  _, current_accuracy = model.evaluate(validation_x, validation_y, verbose=verbo)
 
   # if we start and are already below the threshhold, we should return.
   if current_accuracy < thresh:
@@ -217,7 +221,8 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
     best_neuron_efficiency = None
     best_neuron_delta_rob = 0
 
-    print(f"current acc: {current_accuracy}")
+    if verbo > 0:
+      print(f"current acc: {current_accuracy}")
 
     for layer_index in allowed_layers:
       # first, compute some layer-specific numbers that will come in handy
@@ -291,13 +296,178 @@ def stabilize_some_l1(model, validation_x, validation_y, thresh=0.99, allowed_la
     assert(best_neuron_index is not None)
     assert(best_neuron_layer is not None)
 
-    print(f"changing neuron at layer: {best_neuron_layer} index: {best_neuron_index}")
+    if verbo > 0:
+      print(f"changing neuron at layer: {best_neuron_layer} index: {best_neuron_index}")
 
-    current_accuracy = stabilize_neuron(best_neuron_layer, best_neuron_index, tentative=True)
-    already_changed.add((best_neuron_layer, best_neuron_index))
-    total_delta_rob += best_neuron_delta_rob
+    current_accuracy, did_change = stabilize_neuron(best_neuron_layer, best_neuron_index, tentative=True)
+    if did_change:
+      already_changed.add((best_neuron_layer, best_neuron_index))
+      total_delta_rob += best_neuron_delta_rob
+    else:
+      should_continue = False
 
   return model, already_changed, total_delta_rob
+
+class stabilization_tracker:
+
+  sorted_indices = []
+  current_stabilized = 0 # all indices < than this one are stabilized, >= are not stabilized.
+
+  def __init__(self, neuron_indices, heuristic):
+    assert(len(neuron_indices) == len(heuristic))
+
+    together = list(zip(neuron_indices, heuristic))
+    together.sort(key=lambda x: x[1], reverse=True)
+
+    self.sorted_indices = [x[0] for x in together]
+
+  # return the indices that need to be stabilized
+  def stabilize(self, up_to):
+    assert(up_to >= self.current_stabilized)
+    old = self.current_stabilized
+    self.current_stabilized = up_to
+
+    return self.sorted_indices[old : up_to]
+
+  # return indices that need to be unstabilized
+  def unstabilize(self, down_to):
+    assert(down_to <= self.current_stabilized)
+    old = self.current_stabilized
+    self.current_stabilized = down_to
+
+    return self.sorted_indices[down_to : old]
+
+  def changed(self):
+    return self.sorted_indices[:self.current_stabilized]
+
+def stabilize_logn(model, validation_x, validation_y, thresh=0.99, allowed_layers=(0,), verbo=2):
+  # algorithm basically works as follows (using binary searcH):
+  # try stabilizing a certain number of neurons
+  # If the accuracy is above the threshold, stabilize more
+  # If it's below, stabilize fewer
+
+  # The order of the stabilization is decided by descending order of the heuristic
+
+  original_weights = [
+    tf.identity(tensor)
+    for tensor in model.get_weights()
+  ]
+
+  def calc_heuristic_for_layer(layer_weights):
+    l_inf_norms = tf.norm(layer_weights, ord=np.inf, axis=0)
+    l1_norms = tf.norm(layer_weights, ord=1, axis=0)
+    heuristic = l1_norms/l_inf_norms
+    np_array = heuristic.numpy()
+    final_list = np_array.tolist()
+    if isinstance(final_list, list):
+      return final_list
+    else:
+      return [final_list]
+
+  heuristic = [
+    calc_heuristic_for_layer(layer_weights)
+    for layer_weights in original_weights
+  ]
+
+  # now, make an array of form [(index in weights, heuristic value)]
+
+  indices_and_heuristics = [
+    ((layer_index, weight_index), heuristic_value)
+    for layer_index, layer_heuristic in enumerate(heuristic)
+    for weight_index, heuristic_value in enumerate(layer_heuristic)
+  ]
+
+  indices = [x[0] for x in indices_and_heuristics]
+  heuristics = [x[1] for x in indices_and_heuristics]
+
+  tracker = stabilization_tracker(indices, heuristics)
+
+  # now, we just have to give an index, and the tracker will
+  # tell us what to stabilize or unstabilize
+
+  # Now, here is the binary search part
+  upper_bound = len(indices) + 1
+  lower_bound = 0
+  last_index = 0
+  next_index = int((upper_bound + lower_bound)/2)
+  # we set the initial constants so that at the beginning
+  # the loop will see that we need to stabilize
+  # the first half of the indices
+
+  should_continue = True
+  while should_continue:
+
+    print(f"next_index: {next_index}, last_index: {last_index}, u: {upper_bound}, l: {lower_bound}")
+
+    if next_index > last_index:
+      to_stabilize = tracker.stabilize(next_index)
+      # stabilize these indices now
+      current_weights = model.get_weights()
+      for (layer_index, neuron_index) in to_stabilize:
+
+        is_big = (len(current_weights[layer_index].shape) == 2)
+
+        if not is_big:
+          assert len(current_weights[layer_index].shape) == 1
+
+        layer = current_weights[layer_index]
+
+        if is_big:
+          neuron_weights = layer[:, neuron_index]
+        else:
+          neuron_weights = layer[neuron_index]
+
+        neuron_l_inf = tf.norm(neuron_weights, ord=np.inf)
+        new_neuron_weights = tf.math.sign(neuron_weights) * neuron_l_inf
+
+        if is_big:
+          layer[:, neuron_index] = new_neuron_weights
+        else:
+          layer[neuron_index] = new_neuron_weights
+
+        current_weights[layer_index] = layer
+
+      model.set_weights(current_weights)
+
+    elif next_index < last_index:
+      to_unstabilize = tracker.unstabilize(next_index)
+
+      current_weights = model.get_weights()
+      for (layer_index, neuron_index) in to_unstabilize:
+        if len(current_weights[layer_index].shape) == 1:
+          current_weights[layer_index][neuron_index] = original_weights[layer_index][neuron_index]
+        elif len(current_weights[layer_index].shape) == 2:
+          current_weights[layer_index][:, neuron_index] = original_weights[layer_index][:, neuron_index]
+        else:
+          print(current_weights[layer_index])
+          print("the shape was strange")
+          assert(False)
+
+      model.set_weights(current_weights)
+
+
+    # evaluate the accuracy
+    _, acc = model.evaluate(validation_x, validation_y, verbose=verbo)
+
+    if acc < thresh:
+      # move left
+      if next_index == upper_bound:
+        should_continue = False
+
+      upper_bound = next_index
+    else:
+      # move right
+      if next_index == lower_bound:
+        should_continue = False
+
+      lower_bound = next_index
+
+    # shift indices
+    last_index = next_index
+    next_index = int((upper_bound + lower_bound) / 2)
+
+  return model, tracker.changed(), None
+
 
 
 

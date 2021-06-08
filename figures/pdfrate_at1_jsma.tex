@@ -1,0 +1,27 @@
+\documentclass[tikz]{standalone}
+%%% aidan's packages %%%
+% for graphing
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\usepackage{tcolorbox} %%% Must be after pgfplots due to option clash.
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+xmin=0, xmax=28, xtick={0,4,8,12,16,20,24,28},
+ymin=0, ymax=1,
+ylabel = \large Accuracy,
+xlabel = \large $\epsilon$,
+height = 6cm,
+title=\large\texttt{PDFRate}(AT 1-epoch) \textbf{JSMA} GMB
+]
+\addplot[color=black,style=semithick]
+table {data/pdfrate_at1_custom_jsma.txt};
+\addlegendentry{AT}
+\addplot[color=red,style=semithick]
+table {data/pdfrate_at1_stable_custom_jsma.txt};
+\addlegendentry{stable}
+\end{axis}
+\end{tikzpicture}
+\end{document}

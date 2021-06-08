@@ -1,0 +1,33 @@
+\documentclass[tikz]{standalone}
+%%% aidan's packages %%%
+% for graphing
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\usepackage{tcolorbox} %%% Must be after pgfplots due to option clash.
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+xmin=0, xmax=28, xtick={0,4,8,12,16,20,24,28},
+ymin=0, ymax=1,
+ylabel = \large Accuracy,
+xlabel = \large $\epsilon$,
+height = 6cm,
+title=\large\texttt{PDFRate} \textbf{BB} GMBC
+]
+\addplot[color=black,style=semithick]
+table {data/pdfrate_brendel.txt};
+\addlegendentry{original}
+\addplot[color=red,style=semithick]
+table {data/pdfrate_0.99_brendel.txt};
+\addlegendentry{$\beta$ = 0.990}
+\addplot[color=blue,style=semithick]
+table {data/pdfrate_0.985_brendel.txt};
+\addlegendentry{$\beta$ = 0.985}
+\addplot[color=green,style=semithick]
+table {data/pdfrate_0.98_brendel.txt};
+\addlegendentry{$\beta$ = 0.980}
+\end{axis}
+\end{tikzpicture}
+\end{document}

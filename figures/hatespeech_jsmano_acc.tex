@@ -1,0 +1,33 @@
+\documentclass[tikz]{standalone}
+%%% aidan's packages %%%
+% for graphing
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+\usepackage{tcolorbox} %%% Must be after pgfplots due to option clash.
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+xmin=0, xmax=6, xtick={0,2,4,6},
+ymin=0, ymax=1,
+ylabel = \large Accuracy,
+xlabel = \large $\epsilon$,
+height = 6cm,
+title=\large\texttt{Hatespeech} \textbf{JSMA} GMB
+]
+\addplot[color=black,style=semithick]
+table {data/hatespeech_custom_jsma.txt};
+\addlegendentry{original}
+\addplot[color=red,style=semithick]
+table {data/hatespeech_stable_no_acc0.90_custom_jsma.txt};
+\addlegendentry{$\beta$ = 0.90}
+\addplot[color=blue,style=semithick]
+table {data/hatespeech_stable_no_acc0.89_custom_jsma.txt};
+\addlegendentry{$\beta$ = 0.89}
+\addplot[color=green,style=semithick]
+table {data/hatespeech_stable_no_acc0.88_custom_jsma.txt};
+\addlegendentry{$\beta$ = 0.88}
+\end{axis}
+\end{tikzpicture}
+\end{document}
